@@ -48,8 +48,9 @@ class LawyerSignupSerializer(UserSignupSerializer):
     certificate = serializers.FileField(required=True, allow_null=False, allow_empty_file=False)
 
     def create(self, validated_data):
+        del validated_data['password_repetition']
         return Lawyer.objects.create(**validated_data)
 
     def validate_certificate(self, certificate_file):
         # TODO CHECK CERTIFICATE EXTENSION
-        pass
+        return  certificate_file
