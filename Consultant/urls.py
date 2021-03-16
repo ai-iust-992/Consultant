@@ -17,16 +17,29 @@ from django.contrib import admin
 from django.conf.urls import url, include
 from django.urls import path
 from django.conf.urls import url
-from rest_framework_swagger.views import get_swagger_view
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
-schema_view = get_swagger_view(title='Pastebin API')
-
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Snippets API",
+      default_version='v1',
+      description="Test description",
+      terms_of_service="https://www.Consultant.com/policies/terms/",
+      contact=openapi.Contact(email="contact@Consultant.local"),
+      license=openapi.License(name="SE License"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('User.user_urls')),
     path('consultant/', include('User.consultant_urls')),
-    url('swagger/', schema_view),
-]
+    url('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    url('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+  ]
 urlpatterns += staticfiles_urlpatterns()
