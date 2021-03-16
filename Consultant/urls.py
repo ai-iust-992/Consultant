@@ -18,6 +18,7 @@ from django.conf.urls import url, include
 from django.urls import path
 from django.conf.urls import url
 from rest_framework_swagger.views import get_swagger_view
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 schema_view = get_swagger_view(title='Pastebin API')
 
@@ -26,7 +27,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('User.user_urls')),
     path('consultant/', include('User.consultant_urls')),
-    
     url('swagger/', schema_view),
-
 ]
+urlpatterns += staticfiles_urlpatterns()
