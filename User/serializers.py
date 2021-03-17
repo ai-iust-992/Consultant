@@ -44,13 +44,29 @@ class UserSignupSerializer(serializers.Serializer):
         return phone_number
 
 
-class LawyerSignupSerializer(UserSignupSerializer):
+class UserConsultantLoginSerializer(serializers.Serializer):
+    auth = serializers.CharField()
+    email_username = serializers.CharField(required=True, allow_blank=False, allow_null=False)
+    password = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=6, max_length=6)
+
+
+class ConsultanSignupSerializer(UserSignupSerializer):
+    consultant_types = (
+        ('Lawyer', 'Lawyer')
+    )
+    consultant_type = serializers.ChoiceField(choices=consultant_types)
+
+    class Meta:
+        abstract = True
+
+
+class LawyerSignupSerializer(ConsultanSignupSerializer):
     certificate = serializers.FileField(required=True, allow_null=False, allow_empty_file=False)
 
     def create(self, validated_data):
-        del validated_data['password_repetition']
+        del validated_data['password_repetition'], validated_data['consultant_type']
         return Lawyer.objects.create(**validated_data)
 
     def validate_certificate(self, certificate_file):
         # TODO CHECK CERTIFICATE EXTENSION
-        return  certificate_file
+        return certificate_file
