@@ -18,11 +18,11 @@ def validate_avatar_extension(value):
 
 
 class UserProfile(AbstractUser):
-    email = models.EmailField(name='email', null=False, blank=False, unique=True)
-    phone_number = models.CharField(name='phone number', max_length=11, null=False, blank=False, unique=True,
+    email = models.EmailField(null=False, blank=False, unique=True)
+    phone_number = models.CharField(max_length=11, null=False, blank=False, unique=True,
                                     validators=[validate_phone_number])
-    private_profile = models.BooleanField(name='is private', default=False, null=False, blank=False)
-    avatar = models.FileField(name='avatar', upload_to="files/user_avatar", null=True, blank=True,
+    private_profile = models.BooleanField(default=False, null=False, blank=False)
+    avatar = models.FileField(upload_to="files/user_avatar", null=True, blank=True,
                               validators=[validate_avatar_extension])
 
 
