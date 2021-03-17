@@ -27,6 +27,6 @@ urlpatterns = [
     path('user/', include('User.user_urls')),
     path('consultant/', include('User.consultant_urls')),
     
-    url(r'^$', schema_view),
+    url('swagger/', schema_view),
 
 ]
