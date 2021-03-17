@@ -43,6 +43,13 @@ class UserSignupSerializer(serializers.Serializer):
             raise serializers.ValidationError("Format of phone_number is not true")
         return phone_number
 
+
+class UserConsultantLoginSerializer(serializers.Serializer):
+    auth = serializers.CharField()
+    email_username = serializers.CharField(required=True, allow_blank=False, allow_null=False)
+    password = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=6, max_length=6)
+
+
 class ConsultanSignupSerializer(UserSignupSerializer):
     consultant_types = (
         ('Lawyer', 'Lawyer')
@@ -56,9 +63,10 @@ class ConsultanSignupSerializer(UserSignupSerializer):
     class Meta:
         abstract = True
 
+
 class LawyerSignupSerializer(ConsultanSignupSerializer):
     certificate = serializers.FileField(required=True, allow_null=False, allow_empty_file=False)
 
     def validate_certificate(self, certificate_file):
         # TODO CHECK CERTIFICATE EXTENSION
-        return  certificate_file
+        return certificate_file
