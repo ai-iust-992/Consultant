@@ -80,6 +80,17 @@ WSGI_APPLICATION = 'Consultant.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
  
 import dj_database_url
+ DATABASES = {
+	'default': {
+	    'ENGINE': 'django.db.backends.postgresql',
+	    'NAME': 'dfnb3vuup1kag3',
+	    'HOST': 'ec2-52-6-178-202.compute-1.amazonaws.com',
+	    'PORT': 5432,
+	    'USER': 'yxfefqmmbxqxyn',
+	    'PASSWORD': '5b05f9b7010cc6e3d570a878f3038384e0eafe04afe0270ffd934941885dd16a'
+     	}
+     }
+'''
 if 'DATABASE_URL' in os.environ:
      DATABASES = {
 	'default': {
@@ -99,6 +110,7 @@ else:
         }
     }
 
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
