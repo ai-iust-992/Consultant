@@ -71,6 +71,7 @@ class UserConsultantLoginAPI(APIView):
 
 class ConsultantSignupAPI(APIView):
     schema = TodoListViewSchema()
+
     def post(self, request, format=None):
         try:
             if request.data['consultant_type'] == 'Lawyer':
