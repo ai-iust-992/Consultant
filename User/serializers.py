@@ -45,9 +45,25 @@ class UserSignupSerializer(serializers.Serializer):
 
 
 class UserConsultantLoginSerializer(serializers.Serializer):
-    auth = serializers.CharField()
+    auth = serializers.CharField(required=False)
     email_username = serializers.CharField(required=True, allow_blank=False, allow_null=False)
-    password = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=6, max_length=6)
+    password = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=6)
+
+
+class UserConsultantSerializerReturnData(serializers.Serializer):
+    user_or_consultant_choice = (
+        ('User', 'User'),
+        ('Consultant', 'Consultant')
+    )
+    #auth = serializers.CharField(required=True, allow_null=False, allow_blank=False)
+    auth = serializers.CharField(required=False)
+    username = serializers.CharField(required=True, allow_null=False, allow_blank=False, max_length=128)
+    email = serializers.EmailField(required=True, allow_blank=False, allow_null=False)
+    first_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
+    last_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
+    phone_number = serializers.CharField(required=True, allow_blank=False, allow_null=False)
+    private_profile = serializers.BooleanField(default=False, allow_null=False)
+    user_or_consultant = serializers.ChoiceField(required=False, choices=user_or_consultant_choice)
 
 
 class ConsultanSignupSerializer(UserSignupSerializer):
