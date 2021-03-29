@@ -17,7 +17,7 @@ class SwaggerUI(TemplateView):
 
 
 class UserSignupAPI(ObtainAuthToken):
-   
+
     def post(self, request, format=None):
         try:
             serializer = serializers.UserSignupSerializer(data=request.data)
@@ -27,13 +27,14 @@ class UserSignupAPI(ObtainAuthToken):
                 return_data.is_valid(raise_exception=True)
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({
-                        'token': token.key,
-                        'data':return_data.data,
-                    }, status=status.HTTP_200_OK)
+                    'token': token.key,
+                    'data': return_data.data,
+                }, status=status.HTTP_200_OK)
             else:
                 return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class UserConsultantLoginAPI(ObtainAuthToken):
     def post(self, request):
@@ -49,12 +50,12 @@ class UserConsultantLoginAPI(ObtainAuthToken):
                 if user[0].password != serializer.validated_data['password']:
                     return Response({'error': 'The password is not true'}, status=status.HTTP_400_BAD_REQUEST)
                 return_data = serializers.UserConsultantSerializerReturnData(user[0], many=False, partial=True)
-                
+
                 token, created = Token.objects.get_or_create(user=user[0])
                 return Response({
-                        'token': token.key,
-                        'data':return_data.data,
-                    }, status=status.HTTP_200_OK)
+                    'token': token.key,
+                    'data': return_data.data,
+                }, status=status.HTTP_200_OK)
             else:
                 return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as server_error:
@@ -76,9 +77,9 @@ class ConsultantSignupAPI(ObtainAuthToken):
 
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({
-                        'token': token.key,
-                        'data':return_data.data,
-                    }, status=status.HTTP_200_OK)
+                    'token': token.key,
+                    'data': return_data.data,
+                }, status=status.HTTP_200_OK)
             else:
                 return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as server_error:
