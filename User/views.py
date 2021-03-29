@@ -1,40 +1,20 @@
 from django.shortcuts import render
-from rest_framework.schemas import AutoSchema
+from django.views.generic import TemplateView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from . import serializers
-import coreapi
+
 
 from .models import *
 
 
-class TodoListViewSchema(AutoSchema):
-
-    def get_manual_fields(self, path, method):
-        import re
-        extra_fields = []
-        if method.lower() in ['post']:
-            extra_fields = [
-                coreapi.Field(name='username', required=True, type='string'),
-                coreapi.Field(name='email', required=True, type='string'),
-                coreapi.Field(name='first_name', required=True, type='string'),
-                coreapi.Field(name='last_name', required=True, type='string'),
-                coreapi.Field(name='phone_number', required=True, type='string'),
-                coreapi.Field(name='password', required=True, type='string'),
-                coreapi.Field(name='password_repetition', required=True, type='string'),
-            ]
-            if re.search(r'consultant/', path) is not None:
-                extra_fields += [
-                    coreapi.Field(name='consultant_type', required=True, type='string'),
-                ]
-
-        manual_fields = super().get_manual_fields(path, method)
-        return manual_fields + extra_fields
+class SwaggerUI(TemplateView):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'swagger-ui.html')
 
 
 class UserSignupAPI(APIView):
-    schema = TodoListViewSchema()
 
     def post(self, request, format=None):
         try:
@@ -70,7 +50,6 @@ class UserConsultantLoginAPI(APIView):
 
 
 class ConsultantSignupAPI(APIView):
-    schema = TodoListViewSchema()
 
     def post(self, request, format=None):
         try:

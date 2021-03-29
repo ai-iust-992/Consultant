@@ -1,0 +1,296 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is API documentiation for pargar team",
+    "version": "1.0.0",
+    "title": "Pargar Swagger"
+  },
+  "host": "consultantiust.herokuapp.com",
+  "tags": [
+    {
+      "name": "User",
+      "description": "Everything about normal user"
+    },
+    {
+      "name": "Consultant",
+      "description": "Everything about consultant"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/user/signup/": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "create a new user",
+        "operationId": "createNormalUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Normal user fields",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "userName"
+              ],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "password_repetition": {
+                  "type": "string"
+                },
+                "phone_number": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "firstName": {
+                  "type": "string"
+                },
+                "lastName": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "phone_number": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/user/login/": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Login normal user",
+        "operationId": "loginNormalUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Login user fields",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email_username"
+              ],
+              "properties": {
+                "email_username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Invalid input value"
+          }
+        }
+      }
+    },
+    "/consultant/signup/": {
+      "post": {
+        "tags": [
+          "Consultant"
+        ],
+        "summary": "create a new user",
+        "operationId": "createConsultant",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "username",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "email",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "phone_number",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "first_name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "last_name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "password_repetition",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "consultant_type",
+            "required": true,
+            "type": "string",
+            "default": "Lawyer"
+          },
+          {
+            "in": "formData",
+            "name": "certificate",
+            "required": true,
+            "type": "file",
+            "description": "certificate for consultant."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "firstName": {
+                  "type": "string"
+                },
+                "lastName": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "phone_number": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/consultant/login/": {
+      "post": {
+        "tags": [
+          "Consultant"
+        ],
+        "summary": "Login Consultant",
+        "description": "Like normal user login",
+        "operationId": "loginConsultant",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": [
+        "userName"
+      ],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "password_repetition": {
+          "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
