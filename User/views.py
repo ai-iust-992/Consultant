@@ -41,7 +41,10 @@ class UserConsultantLoginAPI(APIView):
                     user = UserProfile.objects.filter(email=serializer.validated_data['email_username'])
                 if len(user) == 0:
                     return Response({'error': 'This user not found'}, status=status.HTTP_400_BAD_REQUEST)
-                return_data = serializers.UserConsultantSerializerReturnData(user[0], many=False, partial=True)
+                user = user[0]
+                if user.password != serializer.validated_data['password']:
+                    return Response({'error': 'The password is not true'}, status=status.HTTP_400_BAD_REQUEST)
+                return_data = serializers.UserConsultantSerializerReturnData(user, many=False, partial=True)
                 return Response(data=return_data.data, status=status.HTTP_200_OK)
             else:
                 return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
