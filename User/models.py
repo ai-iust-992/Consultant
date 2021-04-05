@@ -38,4 +38,4 @@ class ConsultantProfile(UserProfile):
 
 
 class Lawyer(ConsultantProfile):
-    certificate = models.FileField(upload_to="lawyers/certificate", null=True, blank=True)
+    certificate = models.FileField(upload_to="files/lawyers/certificate", null=True, blank=True)
