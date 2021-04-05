@@ -24,10 +24,10 @@ class BaseUser(AbstractUser):
     avatar = models.FileField(upload_to="files/user_avatar", null=True, blank=True,
                               validators=[validate_avatar_extension])
 
-    
 
 class UserProfile(BaseUser):
     private_profile = models.BooleanField(default=False, null=False, blank=False)
+
 
 class ConsultantProfile(BaseUser):
     accepted = models.BooleanField(default=False, null=False, blank=False)
