@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'User',
+    'message',
+    'calendar_',
+    'channel',
+    'chat_room',
 ]
 REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
 
@@ -119,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'User.UserProfile'
+AUTH_USER_MODEL = 'User.BaseUser'
 
 
 # Internationalization

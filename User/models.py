@@ -17,24 +17,24 @@ def validate_avatar_extension(value):
         raise ValidationError('Unsupported file extension')
 
 
-class UserProfile(AbstractUser):
+class BaseUser(AbstractUser):
     email = models.EmailField(null=False, blank=False, unique=True)
     phone_number = models.CharField(max_length=11, null=False, blank=False, unique=True,
                                     validators=[validate_phone_number])
-    private_profile = models.BooleanField(default=False, null=False, blank=False)
     avatar = models.FileField(upload_to="files/user_avatar", null=True, blank=True,
                               validators=[validate_avatar_extension])
 
+    
 
-class ConsultantProfile(UserProfile):
+class UserProfile(BaseUser):
+    private_profile = models.BooleanField(default=False, null=False, blank=False)
+
+class ConsultantProfile(BaseUser):
     accepted = models.BooleanField(default=False, null=False, blank=False)
     my_secretaries = models.ManyToManyField(
         UserProfile,
-        related_name="my_consultants"
+        related_name="my_consultants",
     )
-
-    class Meta:
-        abstract = True
 
 
 class Lawyer(ConsultantProfile):
