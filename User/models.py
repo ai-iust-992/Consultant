@@ -28,14 +28,19 @@ class BaseUser(AbstractUser):
 class UserProfile(BaseUser):
     private_profile = models.BooleanField(default=False, null=False, blank=False)
 
+    class Meta:
+        verbose_name_plural = 'UserProfile'
+
 
 class ConsultantProfile(BaseUser):
     accepted = models.BooleanField(default=False, null=False, blank=False)
     my_secretaries = models.ManyToManyField(
         UserProfile,
-        related_name="my_consultants",
     )
 
 
 class Lawyer(ConsultantProfile):
     certificate = models.FileField(upload_to="files/lawyers/certificate", null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = 'Lawyer'
