@@ -24,7 +24,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('User.user_urls')),
-    path('consultant/', include('User.consultant_urls')),
+    path('consultant/', include('channel.urls')),
+    path('channel/', include('')),
     path('swagger/', views.SwaggerUI.as_view(), name='swagger-ui')
 
 ]
