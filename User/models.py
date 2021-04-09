@@ -33,6 +33,7 @@ class UserProfile(BaseUser):
 
 
 class ConsultantProfile(BaseUser):
+    private_profile = models.BooleanField(default=False, null=False, blank=False)
     accepted = models.BooleanField(default=False, null=False, blank=False)
     my_secretaries = models.ManyToManyField(
         UserProfile,

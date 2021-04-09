@@ -1,6 +1,5 @@
 from django.shortcuts import render
-from rest_framework.schemas import AutoSchema
-from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,11 +11,14 @@ from .models import *
 
 
 class SwaggerUI(TemplateView):
+    permission_classes = [AllowAny]
+
     def get(self, request, *args, **kwargs):
         return render(request, 'swagger-ui.html')
 
 
 class UserSignupAPI(ObtainAuthToken):
+    permission_classes = [AllowAny]
 
     def post(self, request, format=None):
         try:
@@ -37,14 +39,16 @@ class UserSignupAPI(ObtainAuthToken):
 
 
 class UserConsultantLoginAPI(ObtainAuthToken):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         try:
             serializer = serializers.UserConsultantLoginSerializer(data=request.data)
             if serializer.is_valid():
                 # TODO: WRITE NATIVE QUERY HERE , USERNAME OR EMAIL
-                user = list(UserProfile.objects.filter(username=serializer.validated_data['email_username']))
+                user = list(BaseUser.objects.filter(username=serializer.validated_data['email_username']))
                 if len(user) == 0:
-                    user = UserProfile.objects.filter(email=serializer.validated_data['email_username'])
+                    user = BaseUser.objects.filter(email=serializer.validated_data['email_username'])
                 if len(user) == 0:
                     return Response({'error': 'This user not found'}, status=status.HTTP_400_BAD_REQUEST)
                 if user[0].password != serializer.validated_data['password']:
@@ -63,6 +67,7 @@ class UserConsultantLoginAPI(ObtainAuthToken):
 
 
 class ConsultantSignupAPI(ObtainAuthToken):
+    permission_classes = [AllowAny]
 
     def post(self, request, format=None):
         try:
