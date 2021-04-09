@@ -20,6 +20,19 @@ def create_uuid_link(thread_lock):
         return uuid.uuid4().hex
 
 
+class CreateLinkAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        try:
+            unique_link = create_uuid_link(create_link_lock)
+            return Response(data={
+                "invite_link": unique_link,
+            }, status=status.HTTP_200_OK)
+        except Exception as server_error:
+            return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class ChannelAPI(APIView):
     permission_classes = [IsAuthenticated]
 
