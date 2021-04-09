@@ -70,7 +70,7 @@ class ConsultanSignupSerializer(UserSignupSerializer):
     consultant_types = (
         ('Lawyer', 'Lawyer')
     )
-    consultant_type = serializers.ChoiceField(choices=consultant_types)
+    user_type = serializers.ChoiceField(choices=consultant_types, required=True)
 
     class Meta:
         abstract = True
@@ -80,7 +80,7 @@ class LawyerSignupSerializer(ConsultanSignupSerializer):
     certificate = serializers.FileField(required=True, allow_null=False, allow_empty_file=False)
 
     def create(self, validated_data):
-        del validated_data['password_repetition'], validated_data['consultant_type']
+        del validated_data['password_repetition']
         return Lawyer.objects.create(**validated_data)
 
     def validate_certificate(self, certificate_file):

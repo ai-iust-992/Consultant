@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import threading
 
-from rest_framework import status
+from rest_framework import status, exceptions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -38,15 +38,19 @@ class ChannelAPI(APIView):
 
     def post(self, request, format=None):
         try:
-            consultant = request.user
+            consultant = ConsultantProfile.objects.filter(baseuser_ptr_id=request.user.id)
+            if len(consultant) == 0:
+                return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
+            consultant = consultant[0]
             channel_serializer = ChannelSerializer(data=request.data)
             if channel_serializer.is_valid():
-                if channel_serializer.validated_data['invite_link'] is None or not channel_serializer.validated_data[
-                    'invite_link']:
-                    channel_serializer.validated_data['invite_link'] = create_uuid_link(create_link_lock)
                 channel_serializer.validated_data['consultant'] = consultant
                 channel = channel_serializer.save()
-
+                channel_serializer = ChannelSerializer(channel)
+                return Response(
+                    data= channel_serializer.data,
+                    status=status.HTTP_200_OK
+                )
             else:
                 return Response({"error": channel_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as server_error:

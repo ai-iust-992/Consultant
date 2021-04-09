@@ -71,7 +71,7 @@ class ConsultantSignupAPI(ObtainAuthToken):
 
     def post(self, request, format=None):
         try:
-            if request.data['consultant_type'] == 'Lawyer':
+            if request.data['user_type'] == 'Lawyer':
                 serializer = serializers.LawyerSignupSerializer(data=request.data)
             else:
                 return Response({'error': 'Type of consultant is not valid!!'}, status=status.HTTP_400_BAD_REQUEST)

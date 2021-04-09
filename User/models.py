@@ -23,7 +23,7 @@ class BaseUser(AbstractUser):
                                     validators=[validate_phone_number])
     avatar = models.FileField(upload_to="files/user_avatar", null=True, blank=True,
                               validators=[validate_avatar_extension])
-
+    user_type = models.CharField(null=False, blank=False, default="normal_user", max_length=32)
 
 class UserProfile(BaseUser):
     private_profile = models.BooleanField(default=False, null=False, blank=False)
