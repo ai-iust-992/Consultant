@@ -401,6 +401,57 @@
           }
         }
       }
+    },
+    "/channel/subscription/": {
+      "post": {
+        "tags": [
+          "Channel"
+        ],
+        "summary": "add new subscriber for channel",
+        "operationId": "addNewSubscriber",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Subscription fields",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "invite_link"
+              ],
+              "properties": {
+                "invite_link": {
+                  "type": "string",
+                  "maxLength": 32
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
