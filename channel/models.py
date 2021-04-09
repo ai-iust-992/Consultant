@@ -23,4 +23,5 @@ class Subscription(models.Model):
     date_joined = models.DateTimeField(default=timezone.now)
 
     class Meta:
+        unique_together = ('channel', 'user',)
         verbose_name_plural = 'Subscription'
