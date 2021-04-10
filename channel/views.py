@@ -71,7 +71,10 @@ class ChannelSubscriptionAPI(APIView):
                 if len(channel) == 0:
                     return Response({"error": "Channel with this invite-link is not exists"},
                                     status=status.HTTP_400_BAD_REQUEST)
-
+                # TODO CHECK CHANNEL secretaries
+                if channel[0].consultant.baseuser_ptr_id == request.user.id:
+                    return Response({"error": "You are consultant of this channel!!!"},
+                                    status=status.HTTP_400_BAD_REQUEST)
                 subscriber = Subscription(user=user, channel=channel[0])
                 subscriber.save()
                 return Response(
