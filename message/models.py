@@ -6,7 +6,7 @@ from User.models import UserProfile
 class Message(models.Model):
     date =  models.DateTimeField( default = timezone.now)
     text = models.TextField( max_length=2000, blank=True, null=True)
-    file_address = models.FileField( upload_to='files/message_file', blank=True, null=True)
+    message_file = models.FileField( upload_to='files/message_file', blank=True, null=True)
     message_choice = [
         ('t', 'text'),
         ('i', 'image'),
