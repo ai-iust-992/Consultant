@@ -130,8 +130,4 @@ dmypy.json
 .pyre/
 .lawyers/
 .idea/
-channel/migrations
-calendar_/migrations
-chat_room/migrations
-message/migrations
 

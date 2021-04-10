@@ -207,7 +207,7 @@
           },
           {
             "in": "formData",
-            "name": "consultant_type",
+            "name": "user_type",
             "required": true,
             "type": "string",
             "default": "Lawyer"
