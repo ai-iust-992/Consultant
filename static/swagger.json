@@ -509,6 +509,48 @@
           }
         }
       }
+    },
+    "/channel/suggestion-channel/": {
+      "get": {
+        "tags": [
+          "Channel"
+        ],
+        "summary": "suggested channel for main page",
+        "operationId": "SuggestedChannel",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "invite_link": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden "
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {

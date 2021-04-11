@@ -9,8 +9,8 @@ class UserProfileAdmin(admin.ModelAdmin):
 admin.site.register(UserProfile, UserProfileAdmin)
 
 
-class LawyerAdmin(admin.ModelAdmin):
+class ConsultantProfileAdmin(admin.ModelAdmin):
     list_display = ['username', 'avatar', 'first_name', 'last_name', 'phone_number', 'accepted']
 
 
-admin.site.register(Lawyer, LawyerAdmin)
+admin.site.register(ConsultantProfile, ConsultantProfileAdmin)

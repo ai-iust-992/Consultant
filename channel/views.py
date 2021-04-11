@@ -98,14 +98,7 @@ class SearchChannel(APIView):
             data = []
             if request.GET.get('search_category') != None:
               #  ch = Channel.objects.filter(consultant==)
-                Channels = Channel.objects.filter(consultant__user_type__in=search_caregory).filter(Q(name__icontains=query))
-                for channel in Channels:
-                    data.append({
-                        'name': channel.name,
-                        'description': channel.description,
-                        'invite_link': channel.invite_link,
-                    })
-                Channels = Channel.objects.filter(consultant__user_type__in=search_caregory).filter(Q(description__icontains=query))            
+                Channels = Channel.objects.filter(consultant__user_type__in=search_caregory).filter(Q(name__icontains=query) | Q(description__icontains=query ))
                 for channel in Channels:
                     data.append({
                         'name': channel.name,
@@ -113,14 +106,7 @@ class SearchChannel(APIView):
                         'invite_link': channel.invite_link,
                     })
             else:
-                Channels = Channel.objects.filter(Q(name__icontains=query))
-                for channel in Channels:
-                    data.append({
-                        'name': channel.name,
-                        'description': channel.description,
-                        'invite_link': channel.invite_link,
-                    })
-                Channels = Channel.objects.filter(Q(description__icontains=query))            
+                Channels = Channel.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
                 for channel in Channels:
                     data.append({
                         'name': channel.name,
@@ -132,3 +118,20 @@ class SearchChannel(APIView):
         except: 
             return Response({'status': "Internal Server Error, We'll Check it later!"},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
+
+class SuggestionChannel(APIView):
+    permission_classes = []
+    def get(self, request, format=None):
+        try:
+            data = []
+            Channels = Channel.objects.all()[0:10]
+            for channel in Channels:
+                data.append({
+                    'name': channel.name,
+                    'description': channel.description,
+                    'invite_link': channel.invite_link,
+                })
+            return Response({'data': data}, status=status.HTTP_200_OK)
+        except: 
+            return Response({'status': "Internal Server Error, We'll Check it later!"},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
