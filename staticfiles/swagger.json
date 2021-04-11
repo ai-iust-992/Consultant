@@ -453,7 +453,63 @@
         }
       }
     },
-   
+    "/channel/search-for-channel/": {
+      "get": {
+        "tags": [
+          "Channel"
+        ],
+        "summary": "search for a set of channel or specific channel between all channels or between channel of a specific category ",
+        "operationId": "SeachForChannel",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "description": "user text for search",
+            "required": true,
+            "type" : "string"
+           },
+           {
+            "in": "query",
+            "name": "search_category",
+            "description": "category of channels (can be None to search generally)",
+            "type" : "string"
+           }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "invite_link": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden "
+          }
+        }
+      }
+    }
   },
   "securityDefinitions": {
     "Bearer": {
