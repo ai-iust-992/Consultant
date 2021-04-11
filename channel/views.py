@@ -85,3 +85,50 @@ class ChannelSubscriptionAPI(APIView):
                 return Response({"error": subscription_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class SearchChannel(APIView):
+    permission_classes = []
+    def get(self, request, format=None):
+        try:
+            from django.db.models import Q
+            query = request.GET['query'] # string
+            
+            if request.GET.get('search_category') != None:
+                search_caregory = request.GET['search_category']
+            data = []
+            if request.GET.get('search_category') != None:
+              #  ch = Channel.objects.filter(consultant==)
+                Channels = Channel.objects.filter(Q(name__icontains=query))  #.objects.filter(consultant.user_type==search_caregory)
+                for channel in Channels:
+                    data.append({
+                        'name': channel.name,
+                        'description': channel.description,
+                        'invite_link': channel.invite_link,
+                    })
+                Channels = Channel.objects.filter(Q(description__icontains=query))            
+                for channel in Channels:
+                    data.append({
+                        'name': channel.name,
+                        'description': channel.description,
+                        'invite_link': channel.invite_link,
+                    })
+            else:
+                Channels = Channel.objects.filter(Q(name__icontains=query))
+                for channel in Channels:
+                    data.append({
+                        'name': channel.name,
+                        'description': channel.description,
+                        'invite_link': channel.invite_link,
+                    })
+                Channels = Channel.objects.filter(Q(description__icontains=query))            
+                for channel in Channels:
+                    data.append({
+                        'name': channel.name,
+                        'description': channel.description,
+                        'invite_link': channel.invite_link,
+                    })
+
+            return Response({'data': data}, status=status.HTTP_200_OK)
+        except: 
+            return Response({'status': "Internal Server Error, We'll Check it later!"},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
