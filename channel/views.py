@@ -98,14 +98,14 @@ class SearchChannel(APIView):
             data = []
             if request.GET.get('search_category') != None:
               #  ch = Channel.objects.filter(consultant==)
-                Channels = Channel.objects.filter(Q(name__icontains=query))  #.objects.filter(consultant.user_type==search_caregory)
+                Channels = Channel.objects.filter(consultant__user_type__in=search_caregory).filter(Q(name__icontains=query))
                 for channel in Channels:
                     data.append({
                         'name': channel.name,
                         'description': channel.description,
                         'invite_link': channel.invite_link,
                     })
-                Channels = Channel.objects.filter(Q(description__icontains=query))            
+                Channels = Channel.objects.filter(consultant__user_type__in=search_caregory).filter(Q(description__icontains=query))            
                 for channel in Channels:
                     data.append({
                         'name': channel.name,
