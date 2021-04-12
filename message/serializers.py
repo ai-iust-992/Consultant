@@ -12,7 +12,7 @@ class ChannelMessageCreatorField(serializers.RelatedField):
 
 
 class ChannelMessageSerializer(serializers.Serializer):
-    message_id = serializers.IntegerField(read_only=True)
+    id = serializers.IntegerField(allow_null=False)
     channel_id = serializers.IntegerField(required=True, allow_null=False)
     creator = ChannelMessageCreatorField(allow_null=False, allow_empty=False, read_only=True)
     text = serializers.CharField(max_length=2000)
@@ -27,5 +27,11 @@ class ChannelMessageSerializer(serializers.Serializer):
     message_file = serializers.FileField(required=False, allow_null=False, allow_empty_file=False)
 
     def create(self, validated_data):
-        del validated_data['channel_id']
+        del validated_data['channel_id'], validated_data['id']
         return ChannelMessage.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.text = validated_data.get('text', instance.text)
+        instance.message_file = validated_data.get('message_file', instance.message_file)
+        instance.save()
+        return instance
