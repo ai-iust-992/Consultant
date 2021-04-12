@@ -67,13 +67,17 @@ class ChannelSubscriptionAPI(APIView):
             user = user[0]
             subscription_serializer = ChannelSubscriptionSerializer(data=request.data)
             if subscription_serializer.is_valid():
-                channel = Channel.objects.filter(invite_link=subscription_serializer.validated_data['invite_link'])
+                channel = Channel.objects.filter(
+                    invite_link=subscription_serializer.validated_data['invite_link']).select_related('consultant')
                 if len(channel) == 0:
                     return Response({"error": "Channel with this invite-link is not exists"},
                                     status=status.HTTP_400_BAD_REQUEST)
-                # TODO CHECK CHANNEL secretaries
                 if channel[0].consultant.baseuser_ptr_id == request.user.id:
                     return Response({"error": "You are consultant of this channel!!!"},
+                                    status=status.HTTP_400_BAD_REQUEST)
+                if len(ConsultantProfile.my_secretaries.through.objects.filter(
+                        consultantprofile_id=channel[0].consultant.id, userprofile_id=request.user.id)) != 0:
+                    return Response({"error": "You are secretary of this channel!!!"},
                                     status=status.HTTP_400_BAD_REQUEST)
                 subscriber = Subscription(user=user, channel=channel[0])
                 subscriber.save()

@@ -14,7 +14,7 @@ class ChannelMessageCreatorField(serializers.RelatedField):
 class ChannelMessageSerializer(serializers.Serializer):
     message_id = serializers.IntegerField(read_only=True)
     channel_id = serializers.IntegerField(required=True, allow_null=False)
-    creator = ChannelMessageCreatorField(read_only=True, allow_null=False, allow_empty=False)
+    creator = ChannelMessageCreatorField(allow_null=False, allow_empty=False, read_only=True)
     text = serializers.CharField(max_length=2000)
     message_choice = [
         ('t', 'text'),
@@ -22,8 +22,8 @@ class ChannelMessageSerializer(serializers.Serializer):
         ('v', 'video'),
         ('a', 'audio'),
     ]
-    message_type = serializers.CharField(max_length=1, choices=message_choice, required=True, allow_null=False,
-                                         allow_blank=False)
+    message_type = serializers.ChoiceField(choices=message_choice, required=True, allow_null=False,
+                                           allow_blank=False)
     message_file = serializers.FileField(required=False, allow_null=False, allow_empty_file=False)
 
     def create(self, validated_data):
