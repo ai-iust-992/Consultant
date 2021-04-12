@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import *
+from .models import *
+
 
 create_link_lock = threading.Lock()
 
@@ -98,7 +100,7 @@ class SearchChannel(APIView):
             data = []
             if request.GET.get('search_category') != None:
               #  ch = Channel.objects.filter(consultant==)
-                Channels = Channel.objects.filter(consultant__user_type__in=search_caregory).filter(Q(name__icontains=query) | Q(description__icontains=query ))
+                Channels = Channel.objects.filter(consultant__user_type=search_caregory).filter(Q(name__icontains=query) | Q(description__icontains=query ))
                 for channel in Channels:
                     data.append({
                         'name': channel.name,
@@ -120,7 +122,7 @@ class SearchChannel(APIView):
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
 
 class SuggestionChannel(APIView):
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         try:
             data = []
@@ -135,3 +137,67 @@ class SuggestionChannel(APIView):
         except: 
             return Response({'status': "Internal Server Error, We'll Check it later!"},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class GetChannelSubscribers(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, format=None):
+        try:
+            channel_url_or_id = request.GET['channel-url'] # string
+            channel_ = Channel.objects.filter(invite_link=channel_url_or_id)
+            if len(channel_)==0:
+                return Response("channel not exist!", status=status.HTTP_404_NOT_FOUND)
+            channel_ = channel_[0]
+            if channel_.consultant.id != request.user.id and ( request.user not in UserProfile.objects.filter(consultantprofile=channel_.consultant)):
+               return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
+            sb=Subscription.objects.filter(channel=channel_)
+            data = []
+            for i in range(len(sb)):
+                data.append({
+                    'name': sb[i].user.email,
+                    'username': sb[i].user.username,
+                    'user_type': sb[i].user.user_type,
+                    'avatar': sb[i].user.avatar if sb[i].user.avatar else None,
+                })
+            return Response({'data': data}, status=status.HTTP_200_OK)
+        except: 
+            return Response({'status': "Internal Server Error, We'll Check it later!"},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class GetChannelAdmins(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, format=None):
+        try:
+            channel_url_or_id = request.GET['channel-url'] # string
+            channel_ = Channel.objects.filter(invite_link=channel_url_or_id)
+            if len(channel_)==0:
+                return Response("channel not exist!", status=status.HTTP_404_NOT_FOUND)
+            channel_ = channel_[0]
+            #if channel_.consultant.id != request.user.id and ( request.user not in UserProfile.objects.filter(consultantprofile=channel_.consultant)):
+            #   return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
+            
+            admins = UserProfile.objects.filter(consultantprofile=channel_.consultant)
+            print(admins)
+            data = []
+            for i in range(len(admins)):
+                data.append({
+                    'name': admins[i].user.email,
+                    'username': admins[i].user.username,
+                    'user_type': admins[i].user.user_type,
+                    'avatar': admins[i].user.avatar if sb[i].user.avatar else None,
+                })
+            main_data = {
+                'admin':data,
+                'consultant': {
+                    'name': channel_.consultant.email,
+                    'username': channel_.consultant.username,
+                    'user_type': channel_.consultant.user_type,
+                    'avatar': channel_.consultant.avatar if channel_.consultant.avatar else None,
+                }
+            }
+            return Response({'data': main_data}, status=status.HTTP_200_OK)
+        except: 
+            return Response({'status': "Internal Server Error, We'll Check it later!"},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

@@ -25,7 +25,12 @@ class BaseUser(AbstractUser):
                               validators=[validate_avatar_extension])
     user_type_choices = [
         ('Lawyer', 'Lawyer'),
-        ('normal_user', 'normal_user')
+        ('normal_user', 'normal_user'),
+        ('medical', 'medical'),
+        ('Entrance_Exam', 'Entrance_Exam'),
+        ('Psychology', 'Psychology'),
+        ('Educationalـimmigration', 'Educationalـimmigration'),
+        ('Academicـadvice', 'Academicـadvice')
     ]    
     user_type = models.CharField(null=False, blank=False, choices=user_type_choices, default="normal_user", max_length=32)
 

@@ -476,7 +476,6 @@
             "in": "query",
             "name": "query",
             "description": "user text for search",
-            "required": true,
             "type" : "string"
            },
            {
@@ -543,6 +542,129 @@
                 "invite_link": {
                   "type": "string"
                 }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden "
+          }
+        }
+      }
+    },
+    "/channel/channel-subscriber/": {
+      "get": {
+        "tags": [
+          "Channel"
+        ],
+        "summary": "get channel subscriber just secretory and consultant",
+        "operationId": "ChannelSubscriber",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "channel-url",
+            "name": "channel-url",
+            "description": "channel url(to specify which channel)",
+            "type" : "string"
+           }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "name": "string"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "user_type": {
+                  "type": "string"
+                },
+                "avatar": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden "
+          }
+        }
+      }
+    },
+    "/channel/channel-admins/": {
+      "get": {
+        "tags": [
+          "Channel"
+        ],
+        "summary": "get channel admin and consultant(public api)",
+        "operationId": "ChannelAdmins",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "channel-url",
+            "name": "channel-url",
+            "description": "channel url(to specify which channel)",
+            "type" : "string"
+           }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                
+                "admin":{
+                  "name": {
+                    "name": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "user_type": {
+                    "type": "string"
+                  },
+                  "avatar": {
+                    "type": "string"
+                  }
+                },
+                "consultant":{
+                  "name": {
+                    "name": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "user_type": {
+                    "type": "string"
+                  },
+                  "avatar": {
+                    "type": "string"
+                  }
+                } 
               }
             }
           },
