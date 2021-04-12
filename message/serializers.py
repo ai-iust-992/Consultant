@@ -15,7 +15,7 @@ class ChannelMessageSerializer(serializers.Serializer):
     id = serializers.IntegerField(allow_null=False)
     channel_id = serializers.IntegerField(required=True, allow_null=False)
     creator = ChannelMessageCreatorField(allow_null=False, allow_empty=False, read_only=True)
-    text = serializers.CharField(max_length=2000)
+    text = serializers.CharField(max_length=2000, required=False, allow_null=False, allow_blank=False)
     message_choice = [
         ('t', 'text'),
         ('i', 'image'),

@@ -30,6 +30,7 @@ class ChannelMessageAPI(APIView):
                 message_serializer.validated_data['channel'] = channel[0]
                 message = message_serializer.save()
                 message_serializer = ChannelMessageSerializer(message)
+                del message_serializer.data['message_file']
                 return Response(message_serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({"error": message_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -59,6 +60,7 @@ class ChannelMessageAPI(APIView):
                 message_serializer = ChannelMessageSerializer(message[0], data=message_serializer.validated_data)
                 if message_serializer.is_valid(raise_exception=True):
                     message_serializer = ChannelMessageSerializer(message_serializer.save())
+                    del message_serializer.data['message_file']
                     return Response(message_serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({"error": message_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

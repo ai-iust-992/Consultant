@@ -18,6 +18,10 @@
     {
       "name": "Channel",
       "description": "Everything about channel"
+    },
+    {
+      "name": "Channel-Message",
+      "description": "Everything about channel-message"
     }
   ],
   "schemes": [
@@ -449,6 +453,257 @@
           },
           "403": {
             "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/channel-message/": {
+      "post": {
+        "tags": [
+          "Channel-Message"
+        ],
+        "summary": "create a new channel message",
+        "operationId": "createChannelMessage",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "channel_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "text",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "message_file",
+            "required": false,
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "message_type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "a",
+              "i",
+              "v",
+              "t"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel_id": {
+                  "type": "integer"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "creator": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "phone_number": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "message_type": {
+                  "type": "string",
+                  "enum": [
+                    "t",
+                    "a",
+                    "i",
+                    "v"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Channel-Message"
+        ],
+        "summary": "update channel message",
+        "operationId": "updateChannelMessage",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "id",
+            "description": "Message Id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "channel_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "text",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "message_file",
+            "required": false,
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "message_type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "a",
+              "i",
+              "v",
+              "t"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel_id": {
+                  "type": "integer"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "creator": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "phone_number": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "message_type": {
+                  "type": "string",
+                  "enum": [
+                    "t",
+                    "a",
+                    "i",
+                    "v"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Channel-Message"
+        ],
+        "summary": "delete a channel message",
+        "operationId": "deleteChannelMessage",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "id",
+                "channel_id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": "message deleted"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
           }
         }
       }
