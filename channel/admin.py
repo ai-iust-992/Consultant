@@ -3,7 +3,7 @@ from .models import *
 
 
 class ChannelAdmin(admin.ModelAdmin):
-    list_display = ['name', 'description', 'invite_link']
+    list_display = ['id', 'name', 'description', 'invite_link']
 
 
 admin.site.register(Channel, ChannelAdmin)
