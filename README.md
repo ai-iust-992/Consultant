@@ -34,3 +34,4 @@ http://localhost:8000/channel/search-for-channel/?query=         : return all ch
 1- In get channel subscribers:  API is just for channel owner and admin   
 2- channel has not avatar 
 3- searchs API han not return avatar of channels
+

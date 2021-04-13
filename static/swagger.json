@@ -458,7 +458,7 @@
         "tags": [
           "Channel"
         ],
-        "summary": "search for a set of channel or specific channel between all channels or between channel of a specific category ",
+        "summary": "search for a set of channel or specific channel between all channels or between channel of a specific category(public api)",
         "operationId": "SeachForChannel",
         "security": [
           {
@@ -491,14 +491,22 @@
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                },
-                "invite_link": {
-                  "type": "string"
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "consultant_full_name": {
+                        "type": "string"
+                      },
+                      "invite_link": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -533,14 +541,22 @@
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                },
-                "invite_link": {
-                  "type": "string"
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "consultant_full_name": {
+                        "type": "string"
+                      },
+                      "invite_link": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -583,17 +599,26 @@
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
-                  "name": "string"
-                },
-                "username": {
-                  "type": "string"
-                },
-                "user_type": {
-                  "type": "string"
-                },
-                "avatar": {
-                  "type": "string"
+                
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "name": "string"
+                      },
+                      "username": {
+                        "type": "string"
+                      },
+                      "user_type": {
+                        "type": "string"
+                      },
+                      "avatar": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -636,35 +661,43 @@
             "schema": {
               "type": "object",
               "properties": {
-                
-                "admin":{
-                  "name": {
-                    "name": "string"
-                  },
-                  "username": {
-                    "type": "string"
-                  },
-                  "user_type": {
-                    "type": "string"
-                  },
-                  "avatar": {
-                    "type": "string"
+                "consultant":{
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "name": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "user_type": {
+                      "type": "string"
+                    },
+                    "avatar": {
+                      "type": "string"
+                    }
                   }
                 },
-                "consultant":{
-                  "name": {
-                    "name": "string"
-                  },
-                  "username": {
-                    "type": "string"
-                  },
-                  "user_type": {
-                    "type": "string"
-                  },
-                  "avatar": {
-                    "type": "string"
+                "admin": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "name": "string"
+                      },
+                      "username": {
+                        "type": "string"
+                      },
+                      "user_type": {
+                        "type": "string"
+                      },
+                      "avatar": {
+                        "type": "string"
+                      }
+                    }
                   }
-                } 
+                }
               }
             }
           },
