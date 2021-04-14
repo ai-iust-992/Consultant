@@ -3,5 +3,5 @@ from . import views
 
 urlpatterns = [
     path('', views.ChannelMessageAPI.as_view(), name='message_crud'),
-    path('<int:channelId>/', views.ChannelMessageAPI.as_view(), name='get messages'),
+    path('<int:messageId>/', views.ChannelMessageAPI.as_view(), name='get messages'),
 ]
