@@ -18,23 +18,20 @@ class ChannelMessagePagination(PageNumberPagination):
 class ChannelMessageAPI(APIView, ChannelMessagePagination):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, format=None):
+    def get(self, request, channelId, format=None):
         try:
-            message_serializer = ChannelMessageSerializer(data=request.data)
-            if message_serializer.is_valid():
-                channel = Channel.objects.filter(id=message_serializer.validated_data['channel_id'])
-                if len(channel) == 0:
-                    return Response({"error": "channel_id is not exists"}, status=status.HTTP_400_BAD_REQUEST)
-                messages = ChannelMessage.objects.filter(channel_id=channel[0].id).order_by('-date')
-                page = self.paginate_queryset(messages, request, view=self)
-                if page is not None:
-                    message_serializer = self.get_paginated_response(ChannelMessageSerializer(page,
-                                                                                              many=True).data)
-                else:
-                    message_serializer = ChannelMessageSerializer(messages, many=True)
-                return Response(message_serializer.data, status=status.HTTP_200_OK)
+            channel = Channel.objects.filter(id=channelId)
+            if len(channel) == 0:
+                return Response({"error": "channel_id is not exists"}, status=status.HTTP_400_BAD_REQUEST)
+            messages = ChannelMessage.objects.filter(channel_id=channel[0].id).order_by('-date')
+            page = self.paginate_queryset(messages, request, view=self)
+            if page is not None:
+                message_serializer = self.get_paginated_response(ChannelMessageSerializer(page,
+                                                                                          many=True).data)
             else:
-                return Response({"error": message_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                message_serializer = ChannelMessageSerializer(messages, many=True)
+            return Response(message_serializer.data, status=status.HTTP_200_OK)
+
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
