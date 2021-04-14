@@ -278,7 +278,7 @@
         "operationId": "getInviteLink",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -314,7 +314,7 @@
         "operationId": "createChannel",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -415,7 +415,7 @@
         "operationId": "addNewSubscriber",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -457,102 +457,7 @@
         }
       }
     },
-    "/channel-message/": {
-      "post": {
-        "tags": [
-          "Channel-Message"
-        ],
-        "summary": "create a new channel message",
-        "operationId": "createChannelMessage",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "formData",
-            "name": "channel_id",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "in": "formData",
-            "name": "text",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "in": "formData",
-            "name": "message_file",
-            "required": false,
-            "type": "file"
-          },
-          {
-            "in": "formData",
-            "name": "message_type",
-            "required": true,
-            "type": "string",
-            "enum": [
-              "a",
-              "i",
-              "v",
-              "t"
-            ]
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "channel_id": {
-                  "type": "integer"
-                },
-                "text": {
-                  "type": "string"
-                },
-                "creator": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer"
-                    },
-                    "username": {
-                      "type": "string"
-                    },
-                    "phone_number": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "message_type": {
-                  "type": "string",
-                  "enum": [
-                    "t",
-                    "a",
-                    "i",
-                    "v"
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input"
-          }
-        }
-      },
+    "/channel-message/{channelId}/{messageId}": {
       "put": {
         "tags": [
           "Channel-Message"
@@ -561,7 +466,7 @@
         "operationId": "updateChannelMessage",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -572,15 +477,15 @@
         ],
         "parameters": [
           {
-            "in": "formData",
-            "name": "id",
+            "in": "path",
+            "name": "messageId",
             "description": "Message Id",
             "required": true,
             "type": "integer"
           },
           {
-            "in": "formData",
-            "name": "channel_id",
+            "in": "path",
+            "name": "channelId",
             "required": true,
             "type": "integer"
           },
@@ -637,6 +542,9 @@
                       "type": "string"
                     }
                   }
+                },
+                "message_file": {
+                  "type": "string"
                 },
                 "message_type": {
                   "type": "string",
@@ -663,7 +571,7 @@
         "operationId": "deleteChannelMessage",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -674,24 +582,17 @@
         ],
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
+            "in": "path",
+            "name": "messageId",
+            "description": "Message Id",
             "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "id",
-                "channel_id"
-              ],
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "channel_id": {
-                  "type": "integer"
-                }
-              }
-            }
+            "type": "integer"
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer"
           }
         ],
         "responses": {
@@ -707,10 +608,204 @@
           }
         }
       }
+    },
+    "/channel-message/{channelId}/": {
+      "get": {
+        "tags": [
+          "Channel-Message"
+        ],
+        "summary": "get channel messages",
+        "operationId": "getChannelMessages",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer",
+            "minimum": 1,
+            "description": "The channel ID"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "integer",
+            "minimum": 1,
+            "description": "The number of page of channel messages"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string"
+                },
+                "previous": {
+                  "type": "string"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "channel_id": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "message_type": {
+                        "type": "string"
+                      },
+                      "message_file": {
+                        "type": "string"
+                      },
+                      "creator": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "usernaem": {
+                            "type": "string"
+                          },
+                          "phone_number": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Channel-Message"
+        ],
+        "summary": "create a new channel message",
+        "operationId": "createChannelMessage",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "text",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "message_file",
+            "required": false,
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "message_type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "a",
+              "i",
+              "v",
+              "t"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel_id": {
+                  "type": "integer"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "creator": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "phone_number": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "message_file": {
+                  "type": "string"
+                },
+                "message_type": {
+                  "type": "string",
+                  "enum": [
+                    "t",
+                    "a",
+                    "i",
+                    "v"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
-    "Bearer": {
+    "Token": {
       "type": "apiKey",
       "name": "Authorization",
       "in": "header"
