@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Pargar Swagger"
   },
-  "host": "consultantiust.herokuapp.com",
+  "host": "localhost:8000/",
   "tags": [
     {
       "name": "User",
@@ -18,6 +18,10 @@
     {
       "name": "Channel",
       "description": "Everything about channel"
+    },
+    {
+      "name": "Channel-Message",
+      "description": "Everything about channel-message"
     }
   ],
   "schemes": [
@@ -274,7 +278,7 @@
         "operationId": "getInviteLink",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -310,7 +314,7 @@
         "operationId": "createChannel",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -402,6 +406,352 @@
         }
       }
     },
+    "/channel-message/{channelId}/{messageId}/": {
+      "put": {
+        "tags": [
+          "Channel-Message"
+        ],
+        "summary": "update channel message",
+        "operationId": "updateChannelMessage",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "messageId",
+            "description": "Message Id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "text",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "message_file",
+            "required": false,
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "message_type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "a",
+              "i",
+              "v",
+              "t"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel_id": {
+                  "type": "integer"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "creator": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "phone_number": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "message_file": {
+                  "type": "string"
+                },
+                "message_type": {
+                  "type": "string",
+                  "enum": [
+                    "t",
+                    "a",
+                    "i",
+                    "v"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Channel-Message"
+        ],
+        "summary": "delete a channel message",
+        "operationId": "deleteChannelMessage",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "messageId",
+            "description": "Message Id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "default": "message deleted"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/channel-message/{channelId}/": {
+      "get": {
+        "tags": [
+          "Channel-Message"
+        ],
+        "summary": "get channel messages",
+        "operationId": "getChannelMessages",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer",
+            "minimum": 1,
+            "description": "The channel ID"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "integer",
+            "minimum": 1,
+            "description": "The number of page of channel messages"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string"
+                },
+                "previous": {
+                  "type": "string"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "channel_id": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "message_type": {
+                        "type": "string"
+                      },
+                      "message_file": {
+                        "type": "string"
+                      },
+                      "creator": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "usernaem": {
+                            "type": "string"
+                          },
+                          "phone_number": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Channel-Message"
+        ],
+        "summary": "create a new channel message",
+        "operationId": "createChannelMessage",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "text",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "message_file",
+            "required": false,
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "message_type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "a",
+              "i",
+              "v",
+              "t"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel_id": {
+                  "type": "integer"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "creator": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "phone_number": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "message_file": {
+                  "type": "string"
+                },
+                "message_type": {
+                  "type": "string",
+                  "enum": [
+                    "t",
+                    "a",
+                    "i",
+                    "v"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
     "/channel/subscription/": {
       "post": {
         "tags": [
@@ -411,7 +761,7 @@
         "operationId": "addNewSubscriber",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -462,7 +812,7 @@
         "operationId": "SeachForChannel",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -476,14 +826,14 @@
             "in": "query",
             "name": "query",
             "description": "user text for search",
-            "type" : "string"
-           },
-           {
+            "type": "string"
+          },
+          {
             "in": "query",
             "name": "search_category",
             "description": "category of channels (can be None to search generally)",
-            "type" : "string"
-           }
+            "type": "string"
+          }
         ],
         "responses": {
           "200": {
@@ -526,7 +876,7 @@
         "operationId": "SuggestedChannel",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -576,7 +926,7 @@
         "operationId": "ChannelSubscriber",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -587,11 +937,11 @@
         ],
         "parameters": [
           {
-            "in": "channel-url",
+            "in": "query",
             "name": "channel-url",
             "description": "channel url(to specify which channel)",
-            "type" : "string"
-           }
+            "type": "string"
+          }
         ],
         "responses": {
           "200": {
@@ -599,14 +949,13 @@
             "schema": {
               "type": "object",
               "properties": {
-                
                 "data": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
                       "name": {
-                        "name": "string"
+                        "type": "string"
                       },
                       "username": {
                         "type": "string"
@@ -638,7 +987,7 @@
         "operationId": "ChannelAdmins",
         "security": [
           {
-            "Bearer": []
+            "Token": []
           }
         ],
         "consumes": [
@@ -649,11 +998,11 @@
         ],
         "parameters": [
           {
-            "in": "channel-url",
+            "in": "query",
             "name": "channel-url",
             "description": "channel url(to specify which channel)",
-            "type" : "string"
-           }
+            "type": "string"
+          }
         ],
         "responses": {
           "200": {
@@ -661,11 +1010,11 @@
             "schema": {
               "type": "object",
               "properties": {
-                "consultant":{
+                "consultant": {
                   "type": "object",
                   "properties": {
                     "name": {
-                      "name": "string"
+                      "type": "string"
                     },
                     "username": {
                       "type": "string"
@@ -684,7 +1033,7 @@
                     "type": "object",
                     "properties": {
                       "name": {
-                        "name": "string"
+                        "type": "string"
                       },
                       "username": {
                         "type": "string"
@@ -709,7 +1058,7 @@
     }
   },
   "securityDefinitions": {
-    "Bearer": {
+    "Token": {
       "type": "apiKey",
       "name": "Authorization",
       "in": "header"
