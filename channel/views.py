@@ -4,7 +4,7 @@ import threading
 from rest_framework import status, exceptions
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-
+from django.db.models import Q
 from rest_framework.views import APIView
 
 from .serializers import *
@@ -61,12 +61,41 @@ class UserChannelsAPI(APIView):
 
     def get(self, request, format=None):
         try:
-            user_subscriptions = Subscription.objects.filter(user=request.user).select_related('channel')
+            user_is_subscriber = Channel.objects.filter(subscribers=request.user)
+            user_is_consultant = Channel.objects.filter(consultant=request.user)
+            user_is_secretary = Channel.objects.filter(consultant__my_secretaries=request.user)
             user_channels = []
-            for user_subscription in user_subscriptions:
-                user_channels += [user_subscription.channel]
-            channel_serializer = ChannelSerializer(user_channels, many=True)
-            return Response(channel_serializer.data, status=status.HTTP_200_OK)
+            for channel in user_is_consultant:
+                user_channels += [
+                    {
+                        "id": channel.id,
+                        "name": channel.name,
+                        "description": channel.description,
+                        "invite_link": channel.invite_link,
+                        "user_role": "consultant"
+                    }
+                ]
+            for channel in user_is_secretary:
+                user_channels += [
+                    {
+                        "id": channel.id,
+                        "name": channel.name,
+                        "description": channel.description,
+                        "invite_link": channel.invite_link,
+                        "user_role": "secretary"
+                    }
+                ]
+            for channel in user_is_subscriber:
+                user_channels += [
+                    {
+                        "id": channel.id,
+                        "name": channel.name,
+                        "description": channel.description,
+                        "invite_link": channel.invite_link,
+                        "user_role": "subscriber"
+                    }
+                ]
+            return Response(user_channels, status=status.HTTP_200_OK)
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
