@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Pargar Swagger"
   },
-  "host": "localhost:8000/",
+  "host": "localhost:8000",
   "tags": [
     {
       "name": "User",
@@ -385,6 +385,57 @@
           },
           "400": {
             "description": "Invalid input"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/user/channels/": {
+      "get": {
+        "tags": [
+          "Channel"
+        ],
+        "summary": "get all user channels",
+        "operationId": "userChannels",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "invite_link": {
+                    "type": "string"
+                  },
+                  "user_role": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           },
           "403": {
             "description": "Forbidden"
