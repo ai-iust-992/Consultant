@@ -10,7 +10,6 @@ from rest_framework.views import APIView
 from .serializers import *
 from .models import *
 
-
 create_link_lock = threading.Lock()
 
 
@@ -57,6 +56,21 @@ class ChannelAPI(APIView):
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class UserChannelsAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        try:
+            user_subscriptions = Subscription.objects.filter(user=request.user).select_related('channel')
+            user_channels = []
+            for user_subscription in user_subscriptions:
+                user_channels += [user_subscription.channel]
+            channel_serializer = ChannelSerializer(user_channels, many=True)
+            return Response(channel_serializer.data, status=status.HTTP_200_OK)
+        except Exception as server_error:
+            return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class ChannelSubscriptionAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -92,23 +106,26 @@ class ChannelSubscriptionAPI(APIView):
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class SearchChannel(APIView):
     permission_classes = []
+
     def get(self, request, format=None):
         try:
             from django.db.models import Q
-            query = request.GET['query'] # string
-            
+            query = request.GET['query']  # string
+
             if request.GET.get('search_category') != None:
                 search_caregory = request.GET['search_category']
             data = []
             if request.GET.get('search_category') != None:
-              #  ch = Channel.objects.filter(consultant==)
-                Channels = Channel.objects.filter(consultant__user_type=search_caregory).filter(Q(name__icontains=query) | Q(description__icontains=query ))
+                #  ch = Channel.objects.filter(consultant==)
+                Channels = Channel.objects.filter(consultant__user_type=search_caregory).filter(
+                    Q(name__icontains=query) | Q(description__icontains=query))
                 for channel in Channels:
                     data.append({
                         'name': channel.name,
-                        'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name ,
+                        'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name,
                         'invite_link': channel.invite_link,
                     })
             else:
@@ -116,17 +133,19 @@ class SearchChannel(APIView):
                 for channel in Channels:
                     data.append({
                         'name': channel.name,
-                        'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name ,
+                        'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name,
                         'invite_link': channel.invite_link,
                     })
 
             return Response({'data': data}, status=status.HTTP_200_OK)
-        except: 
+        except:
             return Response({'status': "Internal Server Error, We'll Check it later!"},
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class SuggestionChannel(APIView):
     permission_classes = []
+
     def get(self, request, format=None):
         try:
             data = []
@@ -134,27 +153,29 @@ class SuggestionChannel(APIView):
             for channel in Channels:
                 data.append({
                     'name': channel.name,
-                    'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name ,
+                    'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name,
                     'invite_link': channel.invite_link,
                 })
             return Response({'data': data}, status=status.HTTP_200_OK)
-        except: 
+        except:
             return Response({'status': "Internal Server Error, We'll Check it later!"},
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class GetChannelSubscribers(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None):
         try:
-            channel_url_or_id = request.GET['channel-url'] # string
+            channel_url_or_id = request.GET['channel-url']  # string
             channel_ = Channel.objects.filter(invite_link=channel_url_or_id)
-            if len(channel_)==0:
+            if len(channel_) == 0:
                 return Response("channel not exist!", status=status.HTTP_404_NOT_FOUND)
             channel_ = channel_[0]
-            if channel_.consultant.id != request.user.id and ( request.user not in UserProfile.objects.filter(consultantprofile=channel_.consultant)):
-               return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
-            sb=Subscription.objects.filter(channel=channel_)
+            if channel_.consultant.id != request.user.id and (
+                    request.user not in UserProfile.objects.filter(consultantprofile=channel_.consultant)):
+                return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
+            sb = Subscription.objects.filter(channel=channel_)
             data = []
             for i in range(len(sb)):
                 data.append({
@@ -164,23 +185,24 @@ class GetChannelSubscribers(APIView):
                     'avatar': sb[i].user.avatar if sb[i].user.avatar else None,
                 })
             return Response({'data': data}, status=status.HTTP_200_OK)
-        except: 
+        except:
             return Response({'status': "Internal Server Error, We'll Check it later!"},
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class GetChannelAdmins(APIView):
     permission_classes = []
+
     def get(self, request, format=None):
         try:
-            channel_url_or_id = request.GET['channel-url'] # string
+            channel_url_or_id = request.GET['channel-url']  # string
             channel_ = Channel.objects.filter(invite_link=channel_url_or_id)
-            if len(channel_)==0:
+            if len(channel_) == 0:
                 return Response("channel not exist!", status=status.HTTP_404_NOT_FOUND)
             channel_ = channel_[0]
-            #if channel_.consultant.id != request.user.id and ( request.user not in UserProfile.objects.filter(consultantprofile=channel_.consultant)):
+            # if channel_.consultant.id != request.user.id and ( request.user not in UserProfile.objects.filter(consultantprofile=channel_.consultant)):
             #   return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
-            
+
             admins = UserProfile.objects.filter(consultantprofile=channel_.consultant)
             print(admins)
             data = []
@@ -192,7 +214,7 @@ class GetChannelAdmins(APIView):
                     'avatar': admins[i].user.avatar if admins[i].user.avatar else None,
                 })
             main_data = {
-                'admin':data,
+                'admin': data,
                 'consultant': {
                     'name': channel_.consultant.email,
                     'username': channel_.consultant.username,
@@ -201,7 +223,6 @@ class GetChannelAdmins(APIView):
                 }
             }
             return Response({'data': main_data}, status=status.HTTP_200_OK)
-        except: 
+        except:
             return Response({'status': "Internal Server Error, We'll Check it later!"},
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
