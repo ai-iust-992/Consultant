@@ -35,6 +35,15 @@ class CreateLinkAPI(APIView):
 class ChannelAPI(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get(self, request, channelId, format=None):
+        try:
+            channel = Channel.objects.filter(id = channelId).select_related('consultant')
+            if len(channel) == 0:
+                return Response({"error": "This channel id is not exits"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(ChannelSerializer(channel[0]).data, status=status.HTTP_200_OK)
+        except Exception as server_error:
+            return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def post(self, request, format=None):
         try:
             consultant = ConsultantProfile.objects.filter(baseuser_ptr_id=request.user.id)
