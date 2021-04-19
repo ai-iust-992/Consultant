@@ -37,7 +37,7 @@ class ChannelAPI(APIView):
 
     def get(self, request, channelId, format=None):
         try:
-            channel = Channel.objects.filter(id = channelId).select_related('consultant')
+            channel = Channel.objects.filter(id=channelId).select_related('consultant')
             if len(channel) == 0:
                 return Response({"error": "This channel id is not exits"}, status=status.HTTP_400_BAD_REQUEST)
             return Response(ChannelSerializer(channel[0]).data, status=status.HTTP_200_OK)
@@ -105,6 +105,31 @@ class UserChannelsAPI(APIView):
                     }
                 ]
             return Response(user_channels, status=status.HTTP_200_OK)
+        except Exception as server_error:
+            return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UserRoleInChannelAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, channelId, format=None):
+        try:
+            channel = Channel.objects.filter(id=channelId).select_related('consultant__my_secretaries')
+            if len(channel) == 0:
+                return Response({"error": "This channel id is not exits"}, status=status.HTTP_400_BAD_REQUEST)
+            if channel[0].consultant.id == request.user.id:
+                return Response(data={"role": "consultant", "invite_link": channel[0].invite_link},
+                                status=status.HTTP_200_OK)
+            for secretary in channel[0].consultant.my_secretaries.all():
+                if request.user.id == secretary.id:
+                    return Response(data={"role": "secretary", "invite_link": channel[0].invite_link},
+                                    status=status.HTTP_200_OK)
+            for subscriber in channel[0].subscribers.all():
+                if request.user.id == subscriber.id:
+                    return Response(data={"role": "subscriber", "invite_link": channel[0].invite_link},
+                                    status=status.HTTP_200_OK)
+            return Response(data={"role": "nothing", "invite_link": channel[0].invite_link},
+                            status=status.HTTP_200_OK)
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
