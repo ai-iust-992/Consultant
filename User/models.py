@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -31,8 +33,10 @@ class BaseUser(AbstractUser):
         ('Psychology', 'Psychology'),
         ('Educationalـimmigration', 'Educationalـimmigration'),
         ('Academicـadvice', 'Academicـadvice')
-    ]    
-    user_type = models.CharField(null=False, blank=False, choices=user_type_choices, default="normal_user", max_length=32)
+    ]
+    user_type = models.CharField(null=False, blank=False, choices=user_type_choices, default="normal_user",
+                                 max_length=32)
+
 
 class UserProfile(BaseUser):
     private_profile = models.BooleanField(default=False, null=False, blank=False)
@@ -51,3 +55,18 @@ class ConsultantProfile(BaseUser):
 
     class Meta:
         verbose_name_plural = 'ConsultantProfile'
+
+
+class Request(models.Model):
+    target_user = models.ForeignKey(BaseUser, verbose_name="target user", on_delete=models.CASCADE)
+    request_text = models.CharField(null=True, blank=True, max_length=2000)
+    answer_text = models.CharField(null=True, blank=True, max_length=2000)
+    request_date = models.DateTimeField(default=timezone.now, null=False, blank=False)
+    answer_date = models.DateTimeField(null=True, blank=False)
+    accept = models.BooleanField(default=False, null=False, blank=False)
+    request_type_choices = [
+        ('join_channel', 'join_channel'),
+        ('secretary', 'secretary'),
+    ]
+    request_type = models.CharField(null=False, blank=False, choices=request_type_choices, default="join_channel",
+                                    max_length=32)
