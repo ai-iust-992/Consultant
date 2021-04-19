@@ -115,10 +115,17 @@ class AnswerSerializer(serializers.Serializer):
     request_text = serializers.CharField(read_only=True, allow_null=True, allow_blank=True, max_length=2000)
     answer_text = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=2000)
     request_date = serializers.DateTimeField(read_only=True, allow_null=False, )
-    answer_date = serializers.DateTimeField(allow_null=True, required=False)
+    answer_date = serializers.DateTimeField(read_only=True, allow_null=True,)
     accept = serializers.BooleanField(required=True, allow_null=False)
     request_type_choices = [
         ('join_channel', 'join_channel'),
         ('secretary', 'secretary'),
     ]
-    request_type = serializers.ChoiceField(allow_null=False, allow_blank=False, choices=request_type_choices)
+    request_type = serializers.ChoiceField(allow_null=False, allow_blank=False, choices=request_type_choices, read_only=True)
+
+    def update(self, request_instance, validated_data):
+        request_instance.answer_text = validated_data.get('answer_text', request_instance.answer_text)
+        request_instance.accept = validated_data.get('accept', request_instance.accept)
+        request_instance.answer_date = timezone.now()
+        request_instance.save()
+        return request_instance

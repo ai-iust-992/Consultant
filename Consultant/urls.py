@@ -25,6 +25,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('User.user_urls')),
     path('consultant/', include('User.consultant_urls')),
+    path('request/', views.AnswerToRequestAPI.as_view(), name="get all requests"),
+    path('request/<int:requestId>/', views.AnswerToRequestAPI.as_view(), name="answer to requests"),
     path('channel/', include('channel.urls')),
     path('channel-message/<int:channelId>/', include('message.urls')),
     path('swagger/', views.SwaggerUI.as_view(), name='swagger-ui')

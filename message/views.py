@@ -82,8 +82,7 @@ class ChannelMessageAPI(APIView, ChannelMessagePagination):
                                     status=status.HTTP_403_FORBIDDEN)
                 message_serializer = ChannelMessageSerializer(message[0], data=message_serializer.validated_data)
                 if message_serializer.is_valid(raise_exception=True):
-                    message_serializer = ChannelMessageSerializer(message_serializer.save())
-                    del message_serializer.data['message_file']
+                    message_serializer.save()
                     return Response(message_serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({"error": message_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

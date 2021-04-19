@@ -122,7 +122,7 @@ class SecretaryRequestAPI(APIView):
             consultant = ConsultantProfile.objects.filter(baseuser_ptr_id=request.user.id)
             if len(consultant) == 0:
                 return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
-            secretary_requests = Request.objects.filter(consultant=consultant[0])
+            secretary_requests = Request.objects.filter(consultant=consultant[0]).order_by("-id")
             return Response(AnswerSerializer(secretary_requests, many=True).data, status=status.HTTP_200_OK)
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -139,3 +139,29 @@ class SecretaryRequestAPI(APIView):
             return Response("request is deleted", status=status.HTTP_200_OK)
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class AnswerToRequestAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, requestId, format=None):
+        try:
+            user_request = Request.objects.filter(id=requestId, target_user=request.user)
+            if len(user_request) == 0:
+                return Response({"error": "RequestId is not valid"}, status=status.HTTP_400_BAD_REQUEST)
+            answer_serializer = AnswerSerializer(user_request[0], data=request.data)
+            if answer_serializer.is_valid():
+                answer_serializer.save()
+                return Response(answer_serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": answer_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as server_error:
+            return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get(self, request, format=None):
+        try:
+            user_requests = Request.objects.filter(target_user=request.user).order_by('-id')
+            return Response(AnswerSerializer(user_requests, many=True).data, status=status.HTTP_200_OK)
+        except Exception as server_error:
+            return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
