@@ -56,9 +56,9 @@ class ConsultantProfile(BaseUser):
     class Meta:
         verbose_name_plural = 'ConsultantProfile'
 
-
 class Request(models.Model):
-    target_user = models.ForeignKey(BaseUser, verbose_name="target user", on_delete=models.CASCADE)
+    consultant = models.ForeignKey(ConsultantProfile, verbose_name="Applicant", on_delete=models.CASCADE, related_name="applicant")
+    target_user = models.ForeignKey(BaseUser, verbose_name="Target User", on_delete=models.CASCADE)
     request_text = models.CharField(null=True, blank=True, max_length=2000)
     answer_text = models.CharField(null=True, blank=True, max_length=2000)
     request_date = models.DateTimeField(default=timezone.now, null=False, blank=False)

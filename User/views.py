@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from rest_framework.permissions import AllowAny
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.authtoken.views import ObtainAuthToken, APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -8,6 +8,7 @@ from . import serializers
 from django.views.generic import TemplateView
 
 from .models import *
+from .serializers import RequestSerializer, AnswerSerializer
 
 
 class SwaggerUI(TemplateView):
@@ -72,7 +73,7 @@ class ConsultantSignupAPI(ObtainAuthToken):
     def post(self, request, format=None):
         try:
             serializer = serializers.ConsultanSignupSerializer(data=request.data)
-            
+
             if serializer.is_valid():
                 user = serializer.save()
                 return_data = serializers.UserConsultantSerializerReturnData(data=serializer.validated_data)
@@ -85,5 +86,56 @@ class ConsultantSignupAPI(ObtainAuthToken):
                 }, status=status.HTTP_200_OK)
             else:
                 return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as server_error:
+            return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class SecretaryRequestAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        try:
+            consultant = ConsultantProfile.objects.filter(baseuser_ptr_id=request.user.id)
+            if len(consultant) == 0:
+                return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
+            request_serializer = RequestSerializer(data=request.data)
+            if request_serializer.is_valid():
+                user = BaseUser.objects.filter(username=request_serializer.validated_data['target_user'])
+                if len(user) == 0:
+                    return Response({"error": "This username is not valid"}, status=status.HTTP_400_BAD_REQUEST)
+                if len(ConsultantProfile.objects.filter(my_secretaries=user[0])) != 0:
+                    return Response({"error": "This username is already secretary of you"},
+                                    status=status.HTTP_400_BAD_REQUEST)
+                request_serializer.validated_data['consultant'] = consultant[0]
+                request_serializer.validated_data['target_user'] = user[0]
+                secretary_request = request_serializer.save()
+                return Response(data=AnswerSerializer(secretary_request).data, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": request_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        except Exception as server_error:
+            return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get(self, request, format=None):
+        try:
+            consultant = ConsultantProfile.objects.filter(baseuser_ptr_id=request.user.id)
+            if len(consultant) == 0:
+                return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
+            secretary_requests = Request.objects.filter(consultant=consultant[0])
+            return Response(AnswerSerializer(secretary_requests, many=True).data, status=status.HTTP_200_OK)
+        except Exception as server_error:
+            return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request, requestId, format=None):
+        try:
+            consultant = ConsultantProfile.objects.filter(baseuser_ptr_id=request.user.id)
+            if len(consultant) == 0:
+                return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
+            secretary_requests = Request.objects.filter(consultant=consultant[0], id=requestId)
+            if len(secretary_requests) == 0:
+                return Response("RequestId is not valid", status=status.HTTP_403_FORBIDDEN)
+            secretary_requests.delete()
+            return Response("request is deleted", status=status.HTTP_200_OK)
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
