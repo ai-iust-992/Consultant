@@ -976,6 +976,60 @@
             "description": "Forbidden "
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Channel"
+        ],
+        "summary": "Remove subscriber from channel",
+        "operationId": "RemoveSubscriber",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Remove subscriber fields",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "username",
+                "invite_link"
+              ],
+              "properties": {
+                "invite_link": {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                "username": {
+                  "type": "string",
+                  "maxLength": 150
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
       }
     },
     "/channel/channel-admins/": {

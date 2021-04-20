@@ -32,4 +32,6 @@ class ChannelSerializer(serializers.Serializer):
 class ChannelSubscriptionSerializer(serializers.Serializer):
     invite_link = serializers.CharField(allow_null=False, allow_blank=False, max_length=32, required=True)
 
-
+class DeleteSubscriberSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=150, allow_null=False, allow_blank=False, required=True)
+    invite_link = serializers.CharField(allow_null=False, allow_blank=False, max_length=32, required=True)

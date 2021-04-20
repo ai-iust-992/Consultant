@@ -24,14 +24,14 @@ class BaseUser(AbstractUser):
     avatar = models.FileField(upload_to="files/user_avatar", null=True, blank=True,
                               validators=[validate_avatar_extension])
     user_type_choices = [
-        ('Lawyer', 'Lawyer'),
         ('normal_user', 'normal_user'),
+        ('Lawyer', 'Lawyer'),
         ('medical', 'medical'),
-        ('Entrance_Exam', 'Entrance_Exam'),
+        ('EntranceExam', 'EntranceExam'),
         ('Psychology', 'Psychology'),
-        ('Educationalـimmigration', 'Educationalـimmigration'),
-        ('Academicـadvice', 'Academicـadvice')
-    ]    
+        ('Immigration', 'Immigration'),
+        ('AcademicAdvice', 'AcademicAdvice')
+    ]      
     user_type = models.CharField(null=False, blank=False, choices=user_type_choices, default="normal_user", max_length=32)
 
 class UserProfile(BaseUser):

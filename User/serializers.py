@@ -70,10 +70,10 @@ class ConsultanSignupSerializer(UserSignupSerializer):
     consultant_types = (
         ('Lawyer', 'Lawyer'),
         ('medical', 'medical'),
-        ('Entrance_Exam', 'Entrance_Exam'),
+        ('EntranceExam', 'EntranceExam'),
         ('Psychology', 'Psychology'),
-        ('Educationalـimmigration', 'Educationalـimmigration'),
-        ('Academicـadvice', 'Academicـadvice')
+        ('Immigration', 'Immigration'),
+        ('AcademicAdvice', 'AcademicAdvice')
     )
     user_type = serializers.ChoiceField(choices=consultant_types, required=True)
     certificate = serializers.FileField(required=True, allow_null=False, allow_empty_file=False)

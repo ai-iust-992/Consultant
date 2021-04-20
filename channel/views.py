@@ -225,7 +225,7 @@ class SuggestionChannel(APIView):
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class GetChannelSubscribers(APIView):
+class ChannelSubscribers(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
@@ -251,9 +251,33 @@ class GetChannelSubscribers(APIView):
         except:
             return Response({'status': "Internal Server Error, We'll Check it later!"},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def post(self, request, format=None):
+        try:
+            serializer = DeleteSubscriberSerializer(data=request.data)
+            if serializer.is_valid():
+                username = serializer.data.get('username')
+                invite_link = serializer.data.get('invite_link')
+               
+                channels=Channel.objects.filter(invite_link=invite_link)
+                if len(channels)==0:
+                    return Response("channel not exist!", status=status.HTTP_404_NOT_FOUND)
+                if channels[0].consultant.id != request.user.id and (request.user not in UserProfile.objects.filter(consultantprofile=channels[0].consultant)):
+                    return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
+                
+                value =Subscription.objects.filter(user__username=username, channel=channels[0]).delete()
+                if value[0] == 0:
+                    return Response("this user is not a subscriber of this channel!", status=status.HTTP_404_NOT_FOUND)
+
+                return Response({'status': 'OK'}, status=status.HTTP_200_OK)
+            return Response({'status': 'Bad Request.'}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({'status': "Internal Server Error, We'll Check It Later"},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class GetChannelAdmins(APIView):
+
+class ChannelAdmins(APIView):
     permission_classes = []
 
     def get(self, request, format=None):

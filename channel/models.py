@@ -19,7 +19,7 @@ class Channel(models.Model):
 
 class Subscription(models.Model):
     channel = models.ForeignKey(Channel, verbose_name="", on_delete=models.CASCADE)
-    user = models.ForeignKey(BaseUser, verbose_name="", on_delete=models.CASCADE)
+    user = models.ForeignKey(BaseUser, verbose_name="", on_delete=models.DO_NOTHING)
     date_joined = models.DateTimeField(default=timezone.now)
 
     class Meta:

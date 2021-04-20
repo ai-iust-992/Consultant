@@ -8,7 +8,7 @@ urlpatterns = [
     path('subscription/', views.ChannelSubscriptionAPI.as_view(), name='subscription'),
     path('search-for-channel/', views.SearchChannel.as_view(), name='Search_for_channels'),
     path('suggestion-channel/', views.SuggestionChannel.as_view(), name='suggestion_channels'),
-    path('channel-subscriber/', views.GetChannelSubscribers.as_view(), name='channel_subscriber'),
-    path('channel-admins/', views.GetChannelAdmins.as_view(), name='channel_admins'),
+    path('channel-subscriber/', views.ChannelSubscribers.as_view(), name='channel_subscriber'),
+    path('channel-admins/', views.ChannelAdmins.as_view(), name='channel_admins'),
 
 ]
