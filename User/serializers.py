@@ -90,6 +90,7 @@ class ConsultanSignupSerializer(UserSignupSerializer):
 class UserProfileSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True, allow_null=False)
     username = serializers.CharField(required=True, allow_null=False, allow_blank=False, max_length=128)
+    avatar = serializers.FileField(allow_empty_file=True, allow_null=True, )
     email = serializers.EmailField(required=True, allow_blank=False, allow_null=False)
     first_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
     last_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
@@ -101,10 +102,31 @@ class UserProfileSerializer(serializers.Serializer):
     private_profile = serializers.BooleanField(default=False, allow_null=False)
     user_type = serializers.CharField(read_only=True, allow_null=False, allow_blank=False)
 
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get('username', instance.username)
+        instance.avatar = validated_data.get('avatar', instance.avatar)
+        instance.email = validated_data.get('email', instance.email)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
+        instance.password = validated_data.get('password', instance.password)
+        instance.save()
+        return instance
+
+    def validate_phone_number(self, phone_number):
+        """
+        Check the phone_number regex.
+        """
+        import re
+        if len(phone_number) != 11 or re.search(r"09[0-9]{9}", phone_number) is None:
+            raise serializers.ValidationError("Format of phone_number is not true")
+        return phone_number
+
 
 class ConsultantProfileSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True, allow_null=False)
     username = serializers.CharField(required=True, allow_null=False, allow_blank=False, max_length=128)
+    avatar = serializers.FileField(allow_empty_file=True, allow_null=True, )
     email = serializers.EmailField(required=True, allow_blank=False, allow_null=False)
     first_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
     last_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
@@ -124,3 +146,4 @@ class ConsultantProfileSerializer(serializers.Serializer):
         ('Academicـadvice', 'Academicـadvice')
     )
     user_type = serializers.ChoiceField(choices=consultant_types, required=True)
+
