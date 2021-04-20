@@ -85,3 +85,42 @@ class ConsultanSignupSerializer(UserSignupSerializer):
     def validate_certificate(self, certificate_file):
         # TODO CHECK CERTIFICATE EXTENSION
         return certificate_file
+
+
+class UserProfileSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True, allow_null=False)
+    username = serializers.CharField(required=True, allow_null=False, allow_blank=False, max_length=128)
+    email = serializers.EmailField(required=True, allow_blank=False, allow_null=False)
+    first_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
+    last_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
+    phone_number = serializers.CharField(required=True, allow_blank=False, allow_null=False)
+    password = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=6, max_length=25,
+                                     write_only=True)
+    password_repetition = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=6,
+                                                max_length=25, write_only=True)
+    private_profile = serializers.BooleanField(default=False, allow_null=False)
+    user_type = serializers.CharField(read_only=True, allow_null=False, allow_blank=False)
+
+
+class ConsultantProfileSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True, allow_null=False)
+    username = serializers.CharField(required=True, allow_null=False, allow_blank=False, max_length=128)
+    email = serializers.EmailField(required=True, allow_blank=False, allow_null=False)
+    first_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
+    last_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
+    phone_number = serializers.CharField(required=True, allow_blank=False, allow_null=False)
+    password = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=6, max_length=25,
+                                     write_only=True)
+    password_repetition = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=6,
+                                                max_length=25, write_only=True)
+    private_profile = serializers.BooleanField(default=False, allow_null=False)
+    certificate = serializers.FileField(required=True, allow_null=False, allow_empty_file=False)
+    consultant_types = (
+        ('Lawyer', 'Lawyer'),
+        ('medical', 'medical'),
+        ('Entrance_Exam', 'Entrance_Exam'),
+        ('Psychology', 'Psychology'),
+        ('Educationalـimmigration', 'Educationalـimmigration'),
+        ('Academicـadvice', 'Academicـadvice')
+    )
+    user_type = serializers.ChoiceField(choices=consultant_types, required=True)

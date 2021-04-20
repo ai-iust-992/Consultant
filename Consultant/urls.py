@@ -19,12 +19,11 @@ from django.urls import path
 from User import views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('User.user_urls')),
     path('consultant/', include('User.consultant_urls')),
+    path('profile/', views.UserProfileAPI.as_view(), name="user profile"),
     path('request/', include('request.urls')),
     path('channel/', include('channel.urls')),
     path('channel-message/<int:channelId>/', include('message.urls')),
