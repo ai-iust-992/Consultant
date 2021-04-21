@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Pargar Swagger"
   },
-  "host": "consultantiust.herokuapp.com/",
+  "host": "consultantiust.herokuapp.com",
   "tags": [
     {
       "name": "User",
@@ -392,6 +392,50 @@
         }
       }
     },
+     "/update-channel-inf/{channelId}/":{
+      "put": {
+        "tags": [
+          "Channel"
+        ],
+        "summary": "update channel information",
+        "operationId": "updateChannelInformation",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer"
+          },
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
     "/user/channels/": {
       "get": {
         "tags": [
@@ -446,6 +490,7 @@
         }
       }
     },
+   
     "/channel-message/{channelId}/{messageId}/": {
       "put": {
         "tags": [
@@ -1017,7 +1062,7 @@
           }
         }
       },
-      "post": {
+      "delete": {
         "tags": [
           "Channel"
         ],

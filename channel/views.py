@@ -254,7 +254,7 @@ class ChannelSubscribers(APIView):
             return Response({'status': "Internal Server Error, We'll Check it later!"},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    def post(self, request, format=None):
+    def delete(self, request, format=None):
         try:
             serializer = DeleteSubscriberSerializer(data=request.data)
             if serializer.is_valid():
@@ -319,7 +319,7 @@ class ChannelAdmins(APIView):
 
 class EditChannel(APIView):
     permission_classes = [IsAuthenticated]
-    def post(self, request, channelId, format=None):
+    def put(self, request, channelId, format=None):
         try:
             serializer = ChannelSerializer(data=request.data)
             if serializer.is_valid():
