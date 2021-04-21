@@ -994,7 +994,7 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "name": {
+                      "email": {
                         "type": "string"
                       },
                       "username": {

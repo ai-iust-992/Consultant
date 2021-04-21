@@ -214,6 +214,7 @@ class SuggestionChannel(APIView):
             data = []
             Channels = Channel.objects.all()[0:10]
             for channel in Channels:
+                print(channel.pk)
                 data.append({
                     'name': channel.name,
                     'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name,
@@ -241,8 +242,9 @@ class ChannelSubscribers(APIView):
             sb = Subscription.objects.filter(channel=channel_)
             data = []
             for i in range(len(sb)):
+                print(sb[i].user)
                 data.append({
-                    'name': sb[i].user.email,
+                    'email': sb[i].user.email,
                     'username': sb[i].user.username,
                     'user_type': sb[i].user.user_type,
                     'avatar': sb[i].user.avatar if sb[i].user.avatar else None,
@@ -313,3 +315,26 @@ class ChannelAdmins(APIView):
         except:
             return Response({'status': "Internal Server Error, We'll Check it later!"},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class EditChannel(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, channelId, format=None):
+        try:
+            serializer = ChannelSerializer(data=request.data)
+            if serializer.is_valid():
+                user = request.user
+
+                description = serializer.data.get('description')
+                invite_link = serializer.data.get('invite_link')
+                name =  serializer.data.get('name')
+
+                channel = Channel.objects.filter(id=channelId).update(name=name, description=description, invite_link=invite_link)
+
+
+                return Response({'status': 'OK'},
+                                    status=status.HTTP_200_OK)
+
+        except:
+            return Response({'status': "Internal Server Error, We'll Check It Later"},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
