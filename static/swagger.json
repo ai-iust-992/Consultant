@@ -1302,13 +1302,13 @@
         }
       }
     },
-    "/request/secretary-request/": {
+    "/request/applicant/": {
       "get": {
         "tags": [
           "Request"
         ],
-        "summary": "get consultant secretary requests",
-        "operationId": "getSecretaryRequest",
+        "summary": "get applicant request",
+        "operationId": "getApplicantRequest",
         "security": [
           {
             "Token": []
@@ -1326,8 +1326,19 @@
                 "id": {
                   "type": "integer"
                 },
-                "channel_id": {
-                  "type": "integer"
+                "channel": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "invite_link": {
+                      "type": "string"
+                    }
+                  }
                 },
                 "request_text": {
                   "type": "string"
@@ -1356,6 +1367,9 @@
                       "type": "string"
                     }
                   }
+                },
+                "request_type": {
+                  "type": "string"
                 }
               }
             }
@@ -1366,8 +1380,8 @@
         "tags": [
           "Request"
         ],
-        "summary": "create consultant secretary requests",
-        "operationId": "createSecretaryRequest",
+        "summary": "create new request",
+        "operationId": "createRequest",
         "security": [
           {
             "Token": []
@@ -1388,6 +1402,7 @@
             "schema": {
               "type": "object",
               "required": [
+                "request_type",
                 "target_user"
               ],
               "properties": {
@@ -1396,6 +1411,16 @@
                 },
                 "request_text": {
                   "type": "string"
+                },
+                "request_type": {
+                  "type": "string",
+                  "enum": [
+                    "join_channel",
+                    "secretary"
+                  ]
+                },
+                "channel": {
+                  "type": "integer"
                 }
               }
             }
@@ -1410,8 +1435,19 @@
                 "id": {
                   "type": "integer"
                 },
-                "channel_id": {
-                  "type": "integer"
+                "channel": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "invite_link": {
+                      "type": "string"
+                    }
+                  }
                 },
                 "request_text": {
                   "type": "string"
@@ -1440,20 +1476,76 @@
                       "type": "string"
                     }
                   }
+                },
+                "request_type": {
+                  "type": "string"
                 }
               }
             }
           }
         }
-      }
-    },
-    "/request/secretary-request/{requestId}/": {
+      },
       "delete": {
         "tags": [
           "Request"
         ],
-        "summary": "delete consultant secretary requests",
-        "operationId": "deleteSecretaryRequest",
+        "summary": "delete requests",
+        "operationId": "deleteRequest",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Secretary request fields",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "request_id",
+                "request_type"
+              ],
+              "properties": {
+                "request_type": {
+                  "type": "string",
+                  "enum": [
+                    "join_channel",
+                    "secretary"
+                  ]
+                },
+                "request_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/request/responder/": {
+      "get": {
+        "tags": [
+          "Request"
+        ],
+        "summary": "get all use requests",
+        "operationId": "getUserRequest",
         "security": [
           {
             "Token": []
@@ -1462,19 +1554,168 @@
         "produces": [
           "application/json"
         ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "invite_link": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_text": {
+                  "type": "string"
+                },
+                "request_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "answer_text": {
+                  "type": "string"
+                },
+                "answer_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "accept": {
+                  "type": "boolean"
+                },
+                "target_user": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Request"
+        ],
+        "summary": "answr to requests",
+        "operationId": "answerToRequest",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
-            "in": "path",
-            "name": "requestId",
+            "in": "body",
+            "name": "body",
+            "description": "Secretary request fields",
             "required": true,
-            "type": "integer"
+            "schema": {
+              "type": "object",
+              "required": [
+                "request_type",
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "request id"
+                },
+                "accept": {
+                  "type": "boolean"
+                },
+                "request_type": {
+                  "type": "string",
+                  "enum": [
+                    "join_channel",
+                    "secretary"
+                  ]
+                }
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "invite_link": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_text": {
+                  "type": "string"
+                },
+                "request_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "answer_text": {
+                  "type": "string"
+                },
+                "answer_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "accept": {
+                  "type": "boolean"
+                },
+                "target_user": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_type": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
