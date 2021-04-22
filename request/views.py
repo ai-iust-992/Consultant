@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from .serializers import *
 
 
-class RequestAPI(APIView):
+class ApplicantRequestAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def create_secretary_request(self, request):
@@ -74,38 +74,63 @@ class RequestAPI(APIView):
 
     def get(self, request, format=None):
         try:
-            consultant = ConsultantProfile.objects.filter(baseuser_ptr_id=request.user.id)
-            if len(consultant) == 0:
+            channel = Channel.objects.filter(consultant__username=request.user.username)
+            if len(channel) == 0:
                 return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
-            secretary_requests = SecretaryRequest.objects.filter(consultant=consultant[0]).order_by("-id")
+            secretary_requests = SecretaryRequest.objects.filter(channel=channel[0], answer_date=None).order_by("-id")
             return Response(AnswerSerializer(secretary_requests, many=True).data, status=status.HTTP_200_OK)
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def delete(self, request, requestId, format=None):
+    def delete_secretary_request(self, request):
+        consultant = ConsultantProfile.objects.filter(baseuser_ptr_id=request.user.id)
+        request_id = int(request.data['request_id'])
+        if len(consultant) == 0:
+            return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
+        secretary_request = SecretaryRequest.objects.filter(channel__consultant=consultant[0], id=request_id)
+        if len(secretary_request) == 0:
+            return Response("RequestId is not valid", status=status.HTTP_400_BAD_REQUEST)
+        secretary_request.delete()
+        return Response("request is deleted", status=status.HTTP_200_OK)
+
+    def delete_join_channel_request(self, request):
+        request_id = request.data['request_id']
+        join_request = JoinChannelRequest.objects.filter(id=request_id, ).select_related(
+            'channel__consultant')
+        if len(join_request) == 0:
+            return Response("RequestId is not valid", status=status.HTTP_400_BAD_REQUEST)
+        if join_request[0].channel.consultant.baseuser_ptr_id != request.user.id and len(
+                ConsultantProfile.my_secretaries.through.objects.filter(
+                    consultantprofile_id=join_request[0].channel.consultant.id,
+                    userprofile_id=request.user.id)) == 0:
+            return Response({"error": "You dont have permission for this request"},
+                            status=status.HTTP_403_FORBIDDEN)
+        join_request.delete()
+        return Response("request is deleted", status=status.HTTP_200_OK)
+
+    def delete(self, request, format=None):
         try:
-            consultant = ConsultantProfile.objects.filter(baseuser_ptr_id=request.user.id)
-            if len(consultant) == 0:
-                return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
-            secretary_request = SecretaryRequest.objects.filter(consultant=consultant[0], id=requestId)
-            if len(secretary_request) == 0:
-                return Response("RequestId is not valid", status=status.HTTP_400_BAD_REQUEST)
-            secretary_request.delete()
-            return Response("request is deleted", status=status.HTTP_200_OK)
+            if request.data['request_type'] == "secretary":
+                return self.delete_secretary_request(request)
+            elif request.data['request_type'] == "join_channel":
+                return self.delete_join_channel_request(request)
+            else:
+                return Response({"error": "Request type is not valid"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class AnswerToRequestAPI(APIView):
+class ResponderRequestAPI(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, requestId, format=None):
+    def post(self, request, format=None):
+        request_id = request.data['id']
         try:
             if request.data['request_type'] == 'secretary':
-                user_request = SecretaryRequest.objects.filter(id=requestId, target_user=request.user).select_related(
+                user_request = SecretaryRequest.objects.filter(id=request_id, target_user=request.user).select_related(
                     'consultant')
             elif request.data['request_type'] == 'join_channel':
-                user_request = JoinChannelRequest.objects.filter(id=requestId, target_user=request.user).select_related(
+                user_request = JoinChannelRequest.objects.filter(id=request_id, target_user=request.user).select_related(
                     'channel')
             else:
                 return Response({"error": "request type is not valid"}, status=status.HTTP_400_BAD_REQUEST)
@@ -116,7 +141,7 @@ class AnswerToRequestAPI(APIView):
             if answer_serializer.is_valid():
                 answer_serializer.save()
                 if answer_serializer.validated_data['accept'] and request.data['request_type'] == 'secretary':
-                    user_request[0].consultant.my_secretaries.add(request.user)
+                    user_request[0].channel.consultant.my_secretaries.add(request.user)
                 if answer_serializer.validated_data['accept'] and request.data['request_type'] == 'join_channel':
                     user_request[0].channel.subscribers.add(request.user)
                 return Response(answer_serializer.data, status=status.HTTP_200_OK)
@@ -131,67 +156,25 @@ class AnswerToRequestAPI(APIView):
                 '-id')
             join_requests = JoinChannelRequest.objects.filter(target_user=request.user, answer_date=None).order_by(
                 '-id')
-            user_requests = []
-            for secretary_request in secretary_requests:
-                user_requests += [
-                    {
-                        "id": secretary_request.id,
-                        "request_text": secretary_request.request_text,
-                        "request_date": secretary_request.request_date,
-                        "consultant": {
-                            "username": secretary_request.consultant.username,
-                            "email": secretary_request.consultant.email,
-                        },
-                        "request_type": "secretary"
-                    }
-                ]
-            for join_request in join_requests:
-                user_requests += [
-                    {
-                        "id": join_request.id,
-                        "request_text": join_request.request_text,
-                        "request_date": join_request.request_date,
-                        "channelId": join_request.channel.id,
-                        "request_type": "join_channel"
-                    }
-                ]
-            return Response(user_requests, status=status.HTTP_200_OK)
+            return Response(AnswerSerializer(list(secretary_requests)+list(join_requests), many=True).data, status=status.HTTP_200_OK)
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class JoinChannelRequestAPI(APIView):
-    permission_classes = [IsAuthenticated]
+# class JoinChannelRequestAPI(APIView):
+#     # def get(self, request, format=None):
+#     #     try:
+#     #         join_requests = JoinChannelRequest.objects.filter(creator=request.user)
+#     #         if len(consultant) == 0:
+#     #             return Response("Channel id is not valid", status=status.HTTP_400_BAD_REQUEST)
+#     #         if channel[0].consultant.baseuser_ptr_id != request.user.id and len(
+#     #                 ConsultantProfile.my_secretaries.through.objects.filter(
+#     #                     consultantprofile_id=channel[0].consultant.id, userprofile_id=request.user.id)) == 0:
+#     #             return Response({"error": "You dont have permission for this request"},
+#     #                             status=status.HTTP_403_FORBIDDEN)
+#     #         join_requests = Request.objects.filter(consultant=channel[0].consultant,
+#     #                                                request_type="join_channel").order_by("-id")
+#     #         return Response(AnswerSerializer(join_requests, many=True).data, status=status.HTTP_200_OK)
+#     #     except Exception as server_error:
+#     #         return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    # def get(self, request, format=None):
-    #     try:
-    #         join_requests = JoinChannelRequest.objects.filter(creator=request.user)
-    #         if len(consultant) == 0:
-    #             return Response("Channel id is not valid", status=status.HTTP_400_BAD_REQUEST)
-    #         if channel[0].consultant.baseuser_ptr_id != request.user.id and len(
-    #                 ConsultantProfile.my_secretaries.through.objects.filter(
-    #                     consultantprofile_id=channel[0].consultant.id, userprofile_id=request.user.id)) == 0:
-    #             return Response({"error": "You dont have permission for this request"},
-    #                             status=status.HTTP_403_FORBIDDEN)
-    #         join_requests = Request.objects.filter(consultant=channel[0].consultant,
-    #                                                request_type="join_channel").order_by("-id")
-    #         return Response(AnswerSerializer(join_requests, many=True).data, status=status.HTTP_200_OK)
-    #     except Exception as server_error:
-    #         return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def delete(self, request, channelId, requestId, format=None):
-        try:
-            join_request = JoinChannelRequest.objects.filter(id=requestId, channel_id=channelId).select_related(
-                'channel__consultant')
-            if len(join_request) == 0:
-                return Response("RequestId is not valid", status=status.HTTP_400_BAD_REQUEST)
-            if join_request[0].channel.consultant.baseuser_ptr_id != request.user.id and len(
-                    ConsultantProfile.my_secretaries.through.objects.filter(
-                        consultantprofile_id=join_request[0].channel.consultant.id,
-                        userprofile_id=request.user.id)) == 0:
-                return Response({"error": "You dont have permission for this request"},
-                                status=status.HTTP_403_FORBIDDEN)
-            join_request.delete()
-            return Response("request is deleted", status=status.HTTP_200_OK)
-        except Exception as server_error:
-            return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)

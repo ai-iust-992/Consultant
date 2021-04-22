@@ -24,6 +24,12 @@ class RequestSerializer(serializers.Serializer):
     target_user = serializers.CharField(required=True, allow_null=False, allow_blank=False, )
     request_text = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=2000)
     channel = serializers.IntegerField(required=False, allow_null=False, )
+    request_type_choices = [
+        ("secretary", "secretary"),
+        ("join_channel", "join_channel")
+    ]
+    request_type = serializers.ChoiceField(allow_null=False, allow_blank=False, choices=request_type_choices,
+                                           required=True)
 
     class Meta:
         abstract = True
@@ -48,6 +54,7 @@ class AnswerSerializer(serializers.Serializer):
     request_date = serializers.DateTimeField(read_only=True, allow_null=False, )
     answer_date = serializers.DateTimeField(read_only=True, allow_null=True, )
     accept = serializers.BooleanField(required=True, allow_null=False)
+    request_type = serializers.CharField(read_only=True, max_length=64)
 
     def update(self, request_instance, validated_data):
         request_instance.answer_text = validated_data.get('answer_text', request_instance.answer_text)
