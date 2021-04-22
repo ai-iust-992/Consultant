@@ -16,6 +16,14 @@
       "description": "Everything about consultant"
     },
     {
+      "name": "Profile",
+      "description": "Everything about profile"
+    },
+    {
+      "name": "Request",
+      "description": "Everything about requests"
+    },
+    {
       "name": "Channel",
       "description": "Everything about channel"
     },
@@ -153,6 +161,47 @@
         }
       }
     },
+    "/user/channel-role/{channelId}/": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "get user role in channel",
+        "operationId": "getUserRoleInChannel",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "channelId",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "string"
+                },
+                "invite_link": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/consultant/signup/": {
       "post": {
         "tags": [
@@ -243,6 +292,163 @@
                   "type": "string"
                 },
                 "phone_number": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/profile/": {
+      "put": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "update profile",
+        "operationId": "updateProfile",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "username",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "email",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "phone_number",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "first_name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "last_name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "avatar",
+            "required": true,
+            "type": "file",
+            "description": "user avatar."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "firstName": {
+                  "type": "string"
+                },
+                "lastName": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "phone_number": {
+                  "type": "string"
+                },
+                "avatar": {
+                  "type": "string"
+                },
+                "user_type": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "get profile",
+        "operationId": "getProfile",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "firstName": {
+                  "type": "string"
+                },
+                "lastName": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "phone_number": {
+                  "type": "string"
+                },
+                "avatar": {
+                  "type": "string"
+                },
+                "certificate": {
+                  "type": "string"
+                },
+                "user_type": {
                   "type": "string"
                 }
               }
@@ -1191,6 +1397,425 @@
           },
           "403": {
             "description": "Forbidden "
+          }
+        }
+      }
+    },
+    "/request/applicant/": {
+      "get": {
+        "tags": [
+          "Request"
+        ],
+        "summary": "get applicant request",
+        "operationId": "getApplicantRequest",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "invite_link": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_text": {
+                  "type": "string"
+                },
+                "request_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "answer_text": {
+                  "type": "string"
+                },
+                "answer_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "accept": {
+                  "type": "boolean"
+                },
+                "target_user": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Request"
+        ],
+        "summary": "create new request",
+        "operationId": "createRequest",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Secretary request fields",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "request_type",
+                "target_user"
+              ],
+              "properties": {
+                "target_user": {
+                  "type": "string"
+                },
+                "request_text": {
+                  "type": "string"
+                },
+                "request_type": {
+                  "type": "string",
+                  "enum": [
+                    "join_channel",
+                    "secretary"
+                  ]
+                },
+                "channel": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "invite_link": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_text": {
+                  "type": "string"
+                },
+                "request_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "answer_text": {
+                  "type": "string"
+                },
+                "answer_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "accept": {
+                  "type": "boolean"
+                },
+                "target_user": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Request"
+        ],
+        "summary": "delete requests",
+        "operationId": "deleteRequest",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Secretary request fields",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "request_id",
+                "request_type"
+              ],
+              "properties": {
+                "request_type": {
+                  "type": "string",
+                  "enum": [
+                    "join_channel",
+                    "secretary"
+                  ]
+                },
+                "request_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/request/responder/": {
+      "get": {
+        "tags": [
+          "Request"
+        ],
+        "summary": "get all use requests",
+        "operationId": "getUserRequest",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "invite_link": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_text": {
+                  "type": "string"
+                },
+                "request_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "answer_text": {
+                  "type": "string"
+                },
+                "answer_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "accept": {
+                  "type": "boolean"
+                },
+                "target_user": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Request"
+        ],
+        "summary": "answr to requests",
+        "operationId": "answerToRequest",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Secretary request fields",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "request_type",
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "request id"
+                },
+                "accept": {
+                  "type": "boolean"
+                },
+                "request_type": {
+                  "type": "string",
+                  "enum": [
+                    "join_channel",
+                    "secretary"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "channel": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "invite_link": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_text": {
+                  "type": "string"
+                },
+                "request_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "answer_text": {
+                  "type": "string"
+                },
+                "answer_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "accept": {
+                  "type": "boolean"
+                },
+                "target_user": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "request_type": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }

@@ -2,7 +2,6 @@ import uuid
 
 from django.db import models
 from User.models import ConsultantProfile, BaseUser
-from User.models import UserProfile
 from django.utils import timezone
 
 

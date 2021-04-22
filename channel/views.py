@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 from rest_framework.views import APIView
 
+from User.models import UserProfile
 from .serializers import *
 from .models import *
 
@@ -114,7 +115,7 @@ class UserRoleInChannelAPI(APIView):
 
     def get(self, request, channelId, format=None):
         try:
-            channel = Channel.objects.filter(id=channelId).select_related('consultant__my_secretaries')
+            channel = Channel.objects.filter(id=channelId).select_related('consultant')
             if len(channel) == 0:
                 return Response({"error": "This channel id is not exits"}, status=status.HTTP_400_BAD_REQUEST)
             if channel[0].consultant.id == request.user.id:
