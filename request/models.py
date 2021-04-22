@@ -18,12 +18,8 @@ class Request(models.Model):
 
 
 class SecretaryRequest(Request):
-    consultant = models.ForeignKey(ConsultantProfile, verbose_name="Applicant", on_delete=models.CASCADE,
-                                   related_name="consultant")
+    channel = models.ForeignKey(Channel, verbose_name="Channel", on_delete=models.CASCADE,)
 
 
 class JoinChannelRequest(Request):
-    creator = models.ForeignKey(BaseUser, verbose_name="Applicant", on_delete=models.CASCADE,
-                                related_name="consultant_secretary")
-    channel = models.ForeignKey(Channel, verbose_name="Channel", on_delete=models.CASCADE,
-                                related_name="channel")
+    channel = models.ForeignKey(Channel, verbose_name="Channel", on_delete=models.CASCADE,)

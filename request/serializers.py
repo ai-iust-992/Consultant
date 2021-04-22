@@ -10,10 +10,20 @@ class RequestTargetUser(serializers.RelatedField):
         }
 
 
+class RequestChannel(serializers.RelatedField):
+    def to_representation(self, value):
+        return {
+            "id": value.id,
+            "name": value.name,
+            "invite_link": value.invite_link,
+        }
+
+
 class RequestSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True, allow_null=False)
     target_user = serializers.CharField(required=True, allow_null=False, allow_blank=False, )
     request_text = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=2000)
+    channel = serializers.IntegerField(required=False, allow_null=False, )
 
     class Meta:
         abstract = True
@@ -31,7 +41,7 @@ class JoinChannelRequestSerializer(RequestSerializer):
 
 class AnswerSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True, allow_null=False)
-    channel_id = serializers.IntegerField(read_only=True, allow_null=True)
+    channel = RequestChannel(read_only=True, allow_null=True)
     target_user = RequestTargetUser(read_only=True, allow_null=False, allow_empty=False)
     request_text = serializers.CharField(read_only=True, allow_null=True, allow_blank=True, max_length=2000)
     answer_text = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=2000)
