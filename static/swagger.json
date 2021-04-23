@@ -511,7 +511,73 @@
         }
       }
     },
+    "/channel/{channelId}": {
+      "get": {
+        "tags": [
+          "Channel"
+        ],
+        "summary": "Get channel with Channel ID",
+        "operationId": "GetchannelWithID ",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+         "parameters": [
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer"
+          },
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type" : "string"
+                },
+                "invite_link":{
+                  "type":"string"
+                },
+                "consultant":{
+                  "type": "object",
+                   "properties": {
+                      "username": {
+                        "type": "string"
+                      },
+                      "phone_number": {
+                        "type": "string"
+                      }
+                  }
+                }
+                
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden "
+          }
+        }
+      }
+    },
     "/channel/": {
+      
       "post": {
         "tags": [
           "Channel"

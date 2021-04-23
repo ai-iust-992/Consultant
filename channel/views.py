@@ -212,10 +212,10 @@ class SuggestionChannel(APIView):
 
     def get(self, request, format=None):
         try:
-            user_types= ['normal_user', 'Lawyer', 'medical', 'EntranceExam', 'Psychology', 'Immigration','AcademicAdvice']
+            user_types = ['normal_user', 'Lawyer', 'medical', 'EntranceExam', 'Psychology', 'Immigration','AcademicAdvice']
             data = {}
             for user_type in user_types:
-                Channels = list(Channel.objects.filter(consultant__user_type=user_type))[0:10]
+                Channels = list(Channel.objects.filter(consultant__user_type=user_type))[0:15]
                 tmp = []
                 for channel in Channels:
                      tmp.append({
