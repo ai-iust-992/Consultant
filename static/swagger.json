@@ -1323,7 +1323,7 @@
         }
       }
     },
-    "/channel/channel-admins/": {
+    "/channel/channel-admins/<int:channelId>/": {
       "get": {
         "tags": [
           "Channel"
@@ -1340,14 +1340,6 @@
         ],
         "produces": [
           "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "channel-url",
-            "description": "channel url(to specify which channel)",
-            "type": "string"
-          }
         ],
         "responses": {
           "200": {

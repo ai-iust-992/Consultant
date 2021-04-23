@@ -5,7 +5,10 @@ from django.contrib.auth.models import AbstractUser
 def validate_phone_number(value):
     from django.core.exceptions import ValidationError
     # check phone number regex and return ValidationError
-    pass
+    import re
+    if len(phone_number) != 11 or re.search(r"09[0-9]{9}", phone_number) is None:
+        raise serializers.ValidationError("Format of phone_number is not true")
+    return phone_number
 
 
 def validate_avatar_extension(value):

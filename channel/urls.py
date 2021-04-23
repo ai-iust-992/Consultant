@@ -9,7 +9,7 @@ urlpatterns = [
     path('search-for-channel/', views.SearchChannel.as_view(), name='Search_for_channels'),
     path('suggestion-channel/', views.SuggestionChannel.as_view(), name='suggestion_channels'),
     path('channel-subscriber/', views.ChannelSubscribers.as_view(), name='channel_subscriber'),
-    path('channel-admins/', views.ChannelAdmins.as_view(), name='channel_admins'),
+    path('channel-admins/<int:channelId>/', views.ChannelAdmins.as_view(), name='channel_admins'),
     path('update-channel-inf/<int:channelId>/', views.EditChannel.as_view(), name='update_channel_inf'),
 
 ]

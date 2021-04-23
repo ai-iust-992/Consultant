@@ -282,17 +282,15 @@ class ChannelSubscribers(APIView):
 
 class ChannelAdmins(APIView):
     permission_classes = []
-
-    def get(self, request, format=None):
+    def get(self, request, channelId, format=None):
         try:
-            channel_url_or_id = request.GET['channel-url']  # string
-            channel_ = Channel.objects.filter(invite_link=channel_url_or_id)
-            if len(channel_) == 0:
+            if len(Channel.objects.filter(pk=channelId))==0:
                 return Response("channel not exist!", status=status.HTTP_404_NOT_FOUND)
-            channel_ = channel_[0]
-            # if channel_.consultant.id != request.user.id and ( request.user not in UserProfile.objects.filter(consultantprofile=channel_.consultant)):
-            #   return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
-
+            channel =  list(Channel.objects.filter(pk=channelId))
+            if len(channel)==0:
+                return Response("User has not create channel before!", status=status.HTTP_404_NOT_FOUND)
+            channel_ = channel[0]
+            
             admins = UserProfile.objects.filter(consultantprofile=channel_.consultant)
             print(admins)
             data = []
