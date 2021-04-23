@@ -230,10 +230,9 @@ class SuggestionChannel(APIView):
 class ChannelSubscribers(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, format=None):
+    def get(self, request, channelId, format=None):
         try:
-            channel_url_or_id = request.GET['channel-url']  # string
-            channel_ = Channel.objects.filter(invite_link=channel_url_or_id)
+            channel_ = list(Channel.objects.filter(pk=channelId))
             if len(channel_) == 0:
                 return Response("channel not exist!", status=status.HTTP_404_NOT_FOUND)
             channel_ = channel_[0]
@@ -255,14 +254,13 @@ class ChannelSubscribers(APIView):
             return Response({'status': "Internal Server Error, We'll Check it later!"},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    def delete(self, request, format=None):
+    def delete(self, request, channelId, format=None):
         try:
+            print("this is here")
             serializer = DeleteSubscriberSerializer(data=request.data)
             if serializer.is_valid():
-                username = serializer.data.get('username')
-                invite_link = serializer.data.get('invite_link')
-               
-                channels=Channel.objects.filter(invite_link=invite_link)
+                username = serializer.data.get('username')               
+                channels=list(Channel.objects.filter(pk=channelId))
                 if len(channels)==0:
                     return Response("channel not exist!", status=status.HTTP_404_NOT_FOUND)
                 if channels[0].consultant.id != request.user.id and (request.user not in UserProfile.objects.filter(consultantprofile=channels[0].consultant)):

@@ -1208,7 +1208,7 @@
         }
       }
     },
-    "/channel/channel-subscriber/": {
+    "/channel/channel-subscriber/{channelId}/": {
       "get": {
         "tags": [
           "Channel"
@@ -1228,10 +1228,10 @@
         ],
         "parameters": [
           {
-            "in": "query",
-            "name": "channel-url",
-            "description": "channel url(to specify which channel)",
-            "type": "string"
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer"
           }
         ],
         "responses": {
@@ -1298,16 +1298,18 @@
                 "invite_link"
               ],
               "properties": {
-                "invite_link": {
-                  "type": "string",
-                  "maxLength": 32
-                },
                 "username": {
                   "type": "string",
                   "maxLength": 150
                 }
               }
             }
+          },
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer"
           }
         ],
         "responses": {
@@ -1323,7 +1325,7 @@
         }
       }
     },
-    "/channel/channel-admins/<int:channelId>/": {
+    "/channel/channel-admins/{channelId}/": {
       "get": {
         "tags": [
           "Channel"
@@ -1340,6 +1342,14 @@
         ],
         "produces": [
           "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "channelId",
+            "required": true,
+            "type": "integer"
+          }
         ],
         "responses": {
           "200": {
