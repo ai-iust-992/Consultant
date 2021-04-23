@@ -212,16 +212,21 @@ class SuggestionChannel(APIView):
 
     def get(self, request, format=None):
         try:
-            data = []
-            Channels = Channel.objects.all()[0:10]
-            for channel in Channels:
-                print(channel.pk)
-                data.append({
-                    'name': channel.name,
-                    'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name,
-                    'invite_link': channel.invite_link,
-                })
-            return Response({'data': data}, status=status.HTTP_200_OK)
+            user_types= ['normal_user', 'Lawyer', 'medical', 'EntranceExam', 'Psychology', 'Immigration','AcademicAdvice']
+            data = {}
+            for user_type in user_types:
+                Channels = list(Channel.objects.filter(consultant__user_type=user_type))[0:10]
+                tmp = []
+                for channel in Channels:
+                     tmp.append({
+                            'name': channel.name,
+                            'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name,
+                            'invite_link': channel.invite_link,
+                        })
+                data[user_type]=tmp
+            print(data)
+
+            return Response(data, status=status.HTTP_200_OK)
         except:
             return Response({'status': "Internal Server Error, We'll Check it later!"},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)

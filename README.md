@@ -1,5 +1,7 @@
 # Consultant
 
+# important point:
+if update user types => you must update 3 file => app User(model.py, serializer.py)  app channel(view.py: class SuggestionChannel) 
 
 
 Heroku admin page:

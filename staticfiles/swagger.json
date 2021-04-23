@@ -1182,7 +1182,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "data": {
+                "user_type": {
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -1196,7 +1196,9 @@
                       "invite_link": {
                         "type": "string"
                       }
-                    }
+                    },
+                    
+                    
                   }
                 }
               }
