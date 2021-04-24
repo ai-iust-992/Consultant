@@ -21,9 +21,6 @@ class BaseUserSerializer(serializers.Serializer):
                                      write_only=True)
     private_profile = serializers.BooleanField(default=False, allow_null=False)
 
-    class Meta:
-        abstract = True
-
     def update(self, instance, validated_data):
         instance.username = validated_data.get('username', instance.username)
         instance.avatar = validated_data.get('avatar', instance.avatar)

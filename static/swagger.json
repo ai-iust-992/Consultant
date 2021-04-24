@@ -361,7 +361,6 @@
           {
             "in": "formData",
             "name": "avatar",
-            "required": true,
             "type": "file",
             "description": "user avatar."
           }

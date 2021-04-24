@@ -110,14 +110,14 @@ class UserProfileAPI(APIView):
         try:
             consultant = ConsultantProfile.objects.filter(baseuser_ptr=request.user)
             if len(consultant) != 0:
-                consultant_serializer = ConsultantProfileSerializer(consultant[0], request.data)
+                consultant_serializer = BaseUserSerializer(consultant[0], request.data)
                 if consultant_serializer.is_valid():
                     consultant_serializer.save()
                     return Response(consultant_serializer.data, status=status.HTTP_200_OK)
                 else:
                     return Response({"error": consultant_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
             user = UserProfile.objects.filter(baseuser_ptr=request.user)
-            user_serializer = UserProfileSerializer(user[0], request.data)
+            user_serializer = BaseUserSerializer(user[0], request.data)
             if user_serializer.is_valid():
                 user_serializer.save()
                 return Response(user_serializer.data, status=status.HTTP_200_OK)
