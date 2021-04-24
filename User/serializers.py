@@ -9,7 +9,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=6)
 
 
-class UserProfileSerializer(serializers.Serializer):
+class BaseUserSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True, allow_null=False)
     username = serializers.CharField(required=True, allow_null=False, allow_blank=False, max_length=128)
     avatar = serializers.FileField(allow_empty_file=True, allow_null=True, required=False)
@@ -20,10 +20,9 @@ class UserProfileSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=6, max_length=25,
                                      write_only=True)
     private_profile = serializers.BooleanField(default=False, allow_null=False)
-    user_type = serializers.CharField(read_only=True, allow_null=False, allow_blank=False)
 
-    def create(self, validated_data):
-        return UserProfile.objects.create(**validated_data)
+    class Meta:
+        abstract = True
 
     def update(self, instance, validated_data):
         instance.username = validated_data.get('username', instance.username)
@@ -46,17 +45,14 @@ class UserProfileSerializer(serializers.Serializer):
         return phone_number
 
 
-class ConsultantProfileSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True, allow_null=False)
-    username = serializers.CharField(required=True, allow_null=False, allow_blank=False, max_length=128)
-    avatar = serializers.FileField(allow_empty_file=True, allow_null=True, required=False)
-    email = serializers.EmailField(required=True, allow_blank=False, allow_null=False)
-    first_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
-    last_name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
-    phone_number = serializers.CharField(required=True, allow_blank=False, allow_null=False)
-    password = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=6, max_length=25,
-                                     write_only=True)
-    private_profile = serializers.BooleanField(default=False, allow_null=False)
+class UserProfileSerializer(BaseUserSerializer):
+    user_type = serializers.CharField(read_only=True, allow_null=False, allow_blank=False)
+
+    def create(self, validated_data):
+        return UserProfile.objects.create(**validated_data)
+
+
+class ConsultantProfileSerializer(BaseUserSerializer):
     certificate = serializers.FileField(required=True, allow_null=False, allow_empty_file=False)
     consultant_types = (
         ('Lawyer', 'Lawyer'),

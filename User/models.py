@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from rest_framework import serializers
 
 
-def validate_phone_number(value):
+def validate_phone_number(phone_number):
     from django.core.exceptions import ValidationError
     # check phone number regex and return ValidationError
     import re
