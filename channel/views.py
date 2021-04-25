@@ -82,6 +82,7 @@ class UserChannelsAPI(APIView):
                         "name": channel.name,
                         "description": channel.description,
                         "invite_link": channel.invite_link,
+                        "avatar": channel.avatar.url if channel.avatar else None,
                         "user_role": "consultant"
                     }
                 ]
@@ -92,6 +93,7 @@ class UserChannelsAPI(APIView):
                         "name": channel.name,
                         "description": channel.description,
                         "invite_link": channel.invite_link,
+                        "avatar": channel.avatar.url if channel.avatar else None,
                         "user_role": "secretary"
                     }
                 ]
@@ -102,6 +104,7 @@ class UserChannelsAPI(APIView):
                         "name": channel.name,
                         "description": channel.description,
                         "invite_link": channel.invite_link,
+                        "avatar": channel.avatar.url if channel.avatar else None,
                         "user_role": "subscriber"
                     }
                 ]

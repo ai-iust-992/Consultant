@@ -24,6 +24,7 @@ class ChannelSerializer(serializers.Serializer):
     name = serializers.CharField(allow_null=False, allow_blank=False, required=True, max_length=50)
     description = serializers.CharField(allow_blank=True, allow_null=True, max_length=500, required=True)
     invite_link = serializers.CharField(allow_null=False, allow_blank=False, max_length=32, required=True)
+    avatar = serializers.FileField(allow_null=True, allow_empty_file=False, required=False, )
 
     def create(self, validated_data):
         return Channel.objects.create(**validated_data)
