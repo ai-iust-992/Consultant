@@ -191,6 +191,8 @@ class SearchChannel(APIView):
                         'name': channel.name,
                         'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name,
                         'invite_link': channel.invite_link,
+                        'channelID': channel.pk,
+                        'avatar': channel.avatar.url if channel.avatar else None,
                     })
             else:
                 Channels = Channel.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
@@ -199,6 +201,9 @@ class SearchChannel(APIView):
                         'name': channel.name,
                         'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name,
                         'invite_link': channel.invite_link,
+                        'channelID': channel.pk,
+                        'avatar': channel.avatar.url if channel.avatar else None,
+
                     })
 
             return Response({'data': data}, status=status.HTTP_200_OK)
@@ -218,13 +223,15 @@ class SuggestionChannel(APIView):
                 Channels = list(Channel.objects.filter(consultant__user_type=user_type))[0:15]
                 tmp = []
                 for channel in Channels:
-                     tmp.append({
+                    tmp.append({
                             'name': channel.name,
                             'consultant_full_name': channel.consultant.first_name + " " + channel.consultant.last_name,
                             'invite_link': channel.invite_link,
+                            'channelID': channel.pk,
+                            'avatar': channel.avatar.url if channel.avatar else None,
+
                         })
                 data[user_type]=tmp
-            print(data)
 
             return Response(data, status=status.HTTP_200_OK)
         except:
@@ -247,12 +254,11 @@ class ChannelSubscribers(APIView):
             sb = Subscription.objects.filter(channel=channel_)
             data = []
             for i in range(len(sb)):
-                print(sb[i].user)
                 data.append({
                     'email': sb[i].user.email,
                     'username': sb[i].user.username,
                     'user_type': sb[i].user.user_type,
-                    'avatar': sb[i].user.avatar if sb[i].user.avatar else None,
+                    'avatar': sb[i].user.avatar.url if sb[i].user.avatar else None,
                 })
             return Response({'data': data}, status=status.HTTP_200_OK)
         except:
@@ -261,7 +267,6 @@ class ChannelSubscribers(APIView):
     
     def delete(self, request, channelId, format=None):
         try:
-            print("this is here")
             serializer = DeleteSubscriberSerializer(data=request.data)
             if serializer.is_valid():
                 username = serializer.data.get('username')               
@@ -295,14 +300,13 @@ class ChannelAdmins(APIView):
             channel_ = channel[0]
             
             admins = UserProfile.objects.filter(consultantprofile=channel_.consultant)
-            print(admins)
             data = []
             for i in range(len(admins)):
                 data.append({
                     'name': admins[i].user.email,
                     'username': admins[i].user.username,
                     'user_type': admins[i].user.user_type,
-                    'avatar': admins[i].user.avatar if admins[i].user.avatar else None,
+                    'avatar': admins[i].user.avatar.url if admins[i].user.avatar else None,
                 })
             main_data = {
                 'admin': data,
@@ -310,7 +314,7 @@ class ChannelAdmins(APIView):
                     'name': channel_.consultant.email,
                     'username': channel_.consultant.username,
                     'user_type': channel_.consultant.user_type,
-                    'avatar': channel_.consultant.avatar if channel_.consultant.avatar else None,
+                    'avatar': channel_.consultant.avatar.url if channel_.consultant.avatar else None,
                 }
             }
             return Response({'data': main_data}, status=status.HTTP_200_OK)
@@ -323,22 +327,38 @@ class EditChannel(APIView):
     permission_classes = [IsAuthenticated]
     def put(self, request, channelId, format=None):
         try:
-            serializer = ChannelSerializer(data=request.data)
+            serializer = EditChannelSerializer(data=request.data)
             if serializer.is_valid():
                 user = request.user
                 ch=channel = Channel.objects.filter(id=channelId)
+
                 if ch[0].consultant.id != user.id and ( user not in UserProfile.objects.filter(consultantprofile=ch[0].consultant)):
                     return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
-                
-                description = serializer.data.get('description')
+
+                name = serializer.data.get('name')
+                if name!=None:
+                    Channel.objects.filter(pk=channelId).update(name=name)
                 invite_link = serializer.data.get('invite_link')
-                name =  serializer.data.get('name')
+                if invite_link:
+                    try:
+                        Channel.objects.filter(pk=channelId).update(invite_link=invite_link)
+                    except:
+                        pass
+                avatar = request.FILES['avatar']
+             
+                if avatar!=None:
+                    avatar =  request.FILES['avatar']
+                    ch = Channel.objects.get(pk=channelId)
+                    ch.avatar = avatar
+                    ch.save()
 
-                channel = Channel.objects.filter(id=channelId).update(name=name, description=description, invite_link=invite_link)
-
-
+                description = serializer.data.get('description')
+                if description:
+                    Channel.objects.filter(pk=channelId).update(description=description)
+                
                 return Response({'status': 'OK'},
                                     status=status.HTTP_200_OK)
+
 
         except:
             return Response({'status': "Internal Server Error, We'll Check It Later"},

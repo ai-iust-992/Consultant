@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Pargar Swagger"
   },
-  "host": "consultantiust.herokuapp.com",
+  "host": "localhost:8000",
   "tags": [
     {
       "name": "User",
@@ -361,6 +361,7 @@
           {
             "in": "formData",
             "name": "avatar",
+            "required": true,
             "type": "file",
             "description": "user avatar."
           }
@@ -459,65 +460,6 @@
         }
       }
     },
-    "/profile/{username}/": {
-      "get": {
-        "tags": [
-          "Profile"
-        ],
-        "summary": "get another user profile",
-        "operationId": "getAnotherUserProfile",
-        "security": [
-          {
-            "Token": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "username",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "username": {
-                  "type": "string"
-                },
-                "firstName": {
-                  "type": "string"
-                },
-                "lastName": {
-                  "type": "string"
-                },
-                "avatar": {
-                  "type": "string"
-                },
-                "certificate": {
-                  "type": "string"
-                },
-                "user_type": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input"
-          }
-        }
-      }
-    },
     "/consultant/login/": {
       "post": {
         "tags": [
@@ -587,13 +529,13 @@
         "produces": [
           "application/json"
         ],
-        "parameters": [
+         "parameters": [
           {
             "in": "path",
             "name": "channelId",
             "required": true,
             "type": "integer"
-          }
+          },
         ],
         "responses": {
           "200": {
@@ -608,22 +550,23 @@
                   "type": "string"
                 },
                 "description": {
-                  "type": "string"
+                  "type" : "string"
                 },
-                "invite_link": {
-                  "type": "string"
+                "invite_link":{
+                  "type":"string"
                 },
-                "consultant": {
+                "consultant":{
                   "type": "object",
-                  "properties": {
-                    "username": {
-                      "type": "string"
-                    },
-                    "phone_number": {
-                      "type": "string"
-                    }
+                   "properties": {
+                      "username": {
+                        "type": "string"
+                      },
+                      "phone_number": {
+                        "type": "string"
+                      }
                   }
                 }
+                
               }
             }
           },
@@ -634,6 +577,7 @@
       }
     },
     "/channel/": {
+      
       "post": {
         "tags": [
           "Channel"
@@ -720,12 +664,12 @@
         }
       }
     },
-    "/update-channel-inf/{channelId}/": {
+     "/update-channel-inf/{channelId}/":{
       "put": {
         "tags": [
           "Channel"
         ],
-        "summary": "update channel information",
+        "summary": "update channel information (all part of form are optionl if you would not updata not fill it",
         "operationId": "updateChannelInformation",
         "security": [
           {
@@ -738,14 +682,41 @@
         "produces": [
           "application/json"
         ],
+        
         "parameters": [
           {
             "in": "path",
             "name": "channelId",
             "required": true,
             "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "description",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "invite_link",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "avatar",
+            "required": false,
+            "type": "file",
+            "description": "user avatar."
           }
         ],
+        
         "responses": {
           "200": {
             "description": "OK",
@@ -754,7 +725,7 @@
               "properties": {
                 "status": {
                   "type": "string"
-                }
+                },
               }
             }
           },
@@ -818,6 +789,7 @@
         }
       }
     },
+   
     "/channel-message/{channelId}/{messageId}/": {
       "put": {
         "tags": [
@@ -1266,6 +1238,12 @@
                       },
                       "invite_link": {
                         "type": "string"
+                      },
+                      "channelID": {
+                        "type": "integer"
+                      },
+                       "avatar": {
+                        "type": "string"
                       }
                     }
                   }
@@ -1316,8 +1294,16 @@
                       },
                       "invite_link": {
                         "type": "string"
+                      },
+                       "channelID": {
+                        "type": "integer"
+                      },
+                       "avatar": {
+                        "type": "string"
                       }
-                    }
+                    },
+                    
+                    
                   }
                 }
               }

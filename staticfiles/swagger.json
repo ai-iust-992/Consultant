@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "Pargar Swagger"
   },
-  "host": "consultantiust.herokuapp.com",
+  "host": "localhost:8000",
   "tags": [
     {
       "name": "User",
@@ -669,7 +669,7 @@
         "tags": [
           "Channel"
         ],
-        "summary": "update channel information",
+        "summary": "update channel information (all part of form are optionl if you would not updata not fill it",
         "operationId": "updateChannelInformation",
         "security": [
           {
@@ -682,6 +682,7 @@
         "produces": [
           "application/json"
         ],
+        
         "parameters": [
           {
             "in": "path",
@@ -689,7 +690,33 @@
             "required": true,
             "type": "integer"
           },
+          {
+            "in": "formData",
+            "name": "description",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "invite_link",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "avatar",
+            "required": false,
+            "type": "file",
+            "description": "user avatar."
+          }
         ],
+        
         "responses": {
           "200": {
             "description": "OK",
@@ -1211,6 +1238,12 @@
                       },
                       "invite_link": {
                         "type": "string"
+                      },
+                      "channelID": {
+                        "type": "integer"
+                      },
+                       "avatar": {
+                        "type": "string"
                       }
                     }
                   }
@@ -1260,6 +1293,12 @@
                         "type": "string"
                       },
                       "invite_link": {
+                        "type": "string"
+                      },
+                       "channelID": {
+                        "type": "integer"
+                      },
+                       "avatar": {
                         "type": "string"
                       }
                     },
