@@ -178,11 +178,11 @@ class SearchChannel(APIView):
         try:
             from django.db.models import Q
             query = request.GET['query']  # string
-
+            search_caregory = ''
             if request.GET.get('search_category') != None:
                 search_caregory = request.GET['search_category']
             data = []
-            if request.GET.get('search_category') != None:
+            if (request.GET.get('search_category') != None) or (search_caregory !=''):
                 #  ch = Channel.objects.filter(consultant==)
                 Channels = Channel.objects.filter(consultant__user_type=search_caregory).filter(
                     Q(name__icontains=query) | Q(description__icontains=query))
@@ -303,10 +303,10 @@ class ChannelAdmins(APIView):
             data = []
             for i in range(len(admins)):
                 data.append({
-                    'name': admins[i].user.email,
-                    'username': admins[i].user.username,
-                    'user_type': admins[i].user.user_type,
-                    'avatar': admins[i].user.avatar.url if admins[i].user.avatar else None,
+                    'name': admins[i].email,
+                    'username': admins[i].username,
+                    'user_type': admins[i].user_type,
+                    'avatar': admins[i].avatar.url if admins[i].avatar else None,
                 })
             main_data = {
                 'admin': data,
@@ -344,8 +344,7 @@ class EditChannel(APIView):
                         Channel.objects.filter(pk=channelId).update(invite_link=invite_link)
                     except:
                         pass
-                avatar = request.FILES['avatar']
-             
+                avatar = serializer.data.get('avatar')
                 if avatar!=None:
                     avatar =  request.FILES['avatar']
                     ch = Channel.objects.get(pk=channelId)
