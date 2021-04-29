@@ -664,7 +664,7 @@
         }
       }
     },
-     "/update-channel-inf/{channelId}/":{
+     "/channel/update-channel-inf/{channelId}/":{
       "put": {
         "tags": [
           "Channel"
