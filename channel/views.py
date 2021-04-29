@@ -344,12 +344,15 @@ class EditChannel(APIView):
                         Channel.objects.filter(pk=channelId).update(invite_link=invite_link)
                     except:
                         pass
-                avatar = serializer.data.get('avatar')
-                if avatar!=None:
+                    
+                try:
                     avatar =  request.FILES['avatar']
                     ch = Channel.objects.get(pk=channelId)
+                    ch.avatar.delete(save=True)
                     ch.avatar = avatar
                     ch.save()
+                except:
+                    pass
 
                 description = serializer.data.get('description')
                 if description:
