@@ -38,7 +38,7 @@ class UserSignupAPI(ObtainAuthToken):
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class UserConsultantLoginAPI(ObtainAuthToken):
+class LoginAPI(ObtainAuthToken):
     permission_classes = []
 
     def post(self, request, **kwargs):
@@ -67,6 +67,17 @@ class UserConsultantLoginAPI(ObtainAuthToken):
                 }, status=status.HTTP_200_OK)
             else:
                 return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as server_error:
+            return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class LogoutAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            request.user.auth_token.delete()
+            return Response(status=status.HTTP_200_OK)
         except Exception as server_error:
             return Response(server_error.__str__(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

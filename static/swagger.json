@@ -161,6 +161,28 @@
         }
       }
     },
+    "/user/logout/": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Logout normal user",
+        "operationId": "logoutNormalUser",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/user/channel-role/{channelId}/": {
       "get": {
         "tags": [
@@ -299,6 +321,28 @@
           },
           "400": {
             "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/consultant/logout/": {
+      "post": {
+        "tags": [
+          "Consultant"
+        ],
+        "summary": "Logout consultant",
+        "operationId": "logoutConsultant",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -529,13 +573,13 @@
         "produces": [
           "application/json"
         ],
-         "parameters": [
+        "parameters": [
           {
             "in": "path",
             "name": "channelId",
             "required": true,
             "type": "integer"
-          },
+          }
         ],
         "responses": {
           "200": {
@@ -550,23 +594,22 @@
                   "type": "string"
                 },
                 "description": {
-                  "type" : "string"
+                  "type": "string"
                 },
-                "invite_link":{
-                  "type":"string"
+                "invite_link": {
+                  "type": "string"
                 },
-                "consultant":{
+                "consultant": {
                   "type": "object",
-                   "properties": {
-                      "username": {
-                        "type": "string"
-                      },
-                      "phone_number": {
-                        "type": "string"
-                      }
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "phone_number": {
+                      "type": "string"
+                    }
                   }
                 }
-                
               }
             }
           },
@@ -577,7 +620,6 @@
       }
     },
     "/channel/": {
-      
       "post": {
         "tags": [
           "Channel"
@@ -664,7 +706,7 @@
         }
       }
     },
-     "/channel/update-channel-inf/{channelId}/":{
+    "/channel/update-channel-inf/{channelId}/": {
       "put": {
         "tags": [
           "Channel"
@@ -682,7 +724,6 @@
         "produces": [
           "application/json"
         ],
-        
         "parameters": [
           {
             "in": "path",
@@ -716,7 +757,6 @@
             "description": "user avatar."
           }
         ],
-        
         "responses": {
           "200": {
             "description": "OK",
@@ -725,7 +765,7 @@
               "properties": {
                 "status": {
                   "type": "string"
-                },
+                }
               }
             }
           },
@@ -789,7 +829,6 @@
         }
       }
     },
-   
     "/channel-message/{channelId}/{messageId}/": {
       "put": {
         "tags": [
@@ -1242,7 +1281,7 @@
                       "channelID": {
                         "type": "integer"
                       },
-                       "avatar": {
+                      "avatar": {
                         "type": "string"
                       }
                     }
@@ -1295,15 +1334,13 @@
                       "invite_link": {
                         "type": "string"
                       },
-                       "channelID": {
+                      "channelID": {
                         "type": "integer"
                       },
-                       "avatar": {
+                      "avatar": {
                         "type": "string"
                       }
-                    },
-                    
-                    
+                    }
                   }
                 }
               }
