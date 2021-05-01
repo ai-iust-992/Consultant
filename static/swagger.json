@@ -504,6 +504,65 @@
         }
       }
     },
+    "/profile/{username}/": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "get another user profile",
+        "operationId": "getAnotherProfile",
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "firstName": {
+                  "type": "string"
+                },
+                "lastName": {
+                  "type": "string"
+                },
+                "avatar": {
+                  "type": "string"
+                },
+                "certificate": {
+                  "type": "string"
+                },
+                "user_type": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
     "/consultant/login/": {
       "post": {
         "tags": [
@@ -1469,7 +1528,7 @@
         }
       }
     },
-    "/channel/channel-admins/{channelId}/": {
+    "/channel/channel-admins/{channelId}/'": {
       "get": {
         "tags": [
           "Channel"
