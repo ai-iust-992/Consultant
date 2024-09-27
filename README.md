@@ -1,40 +1,16 @@
-# Consultant
+# Features
+This project implements the backend for a consultancy platform that enables professionals, such as doctors, to create personalized channels and engage with their audience. The system provides seamless interaction between consultants and users, focusing on content sharing, subscription models, and personalized consultation bookings.
 
-# important point:
-if update user types => you must update 3 file => app User(model.py, serializer.py)  app channel(view.py: class SuggestionChannel) 
-
-
-Heroku admin page:
-admin
-admin.iust.ac.ir
-admin12345
-
-
-python manage.py makemigrations User calendar_ channel chat_room message 
-
-
-add ('auth', '__latest__') to dependency of migrations 
-
-
-
-see django sqlite db:
-sqlite3 db.sqlite3
-.tables
-
-SELECT sql FROM sqlite_master WHERE tbl_name = 'channel_channel' AND type = 'table'
-
-
-
-# search-for-channel : 
-http://localhost:8000/channel/search-for-channel/?query=&search_category=Lawyer    : return all channel in Lawyer category
-
-http://localhost:8000/channel/search-for-channel/?query=         : return all channel
-
-
-
-# problem :
-1- In get channel subscribers:  API is just for channel owner and admin   
-2- channel has not avatar 
-3- searchs API han not return avatar of channels
-4- channels has not image fields
-5- user have avatoar field but it's not force to get image from user(normal user or consultant)  
+## 1. Consultant Registration and Personalized Channels
+* Consultant Sign-Up: Professionals can register as consultants on the platform. After registration, each consultant is provided with a dedicated channel.
+* Consultant Channel: The channel serves as a personal space where consultants can share posts, updates, articles, and other relevant information. It acts as a hub for their followers to access valuable content.
+* Content Posting: Consultants can easily create and manage posts to keep their audience engaged and informed on relevant topics such as health tips, research, or advice.
+## 2. User Subscription and Channel Interaction
+* Subscribe and Follow: Users can explore different consultant channels and subscribe to the ones that interest them. Subscribing allows users to receive updates whenever new content is posted on the consultant's channel.
+* Channel Interaction: Users can view posts and interact with the consultant's content. This engagement is designed to help consultants build a following and connect with their audience on a regular basis.
+## 3. Booking System for Consultations
+* Consultant Availability: Consultants can publish their availability by entering their free time slots on their profile. This allows users to see when consultants are available for appointments.
+* Appointment Booking: Users can reserve available time slots to schedule one-on-one consultations.
+## 4. Communication Features
+* Chat: Once an appointment is confirmed, both the user and the consultant can communicate through a built-in chat feature.
+* Video Calls: The platform provides video call capabilities, allowing users to have face-to-face consultations with consultants during reserved appointment times.
